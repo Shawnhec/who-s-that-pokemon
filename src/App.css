@@ -1,0 +1,23 @@
+.app {
+    position: relative;
+    text-align: center;
+    background-color: #FFFFFF;
+}
+
+.app::before {
+    content: "";
+    position: fixed;
+    inset: 0; /* top, bottom, left, right = 0 */
+    background-image: url("https://www.gstatic.com/videogames/pokemon/pokeball.svg");
+    background-position: center;
+    /* background-size: 600px; */
+    opacity: 0.80;
+    z-index: 0;
+    background-size: cover;
+}
+
+
+.app > * {
+    position: relative;
+    z-index: 1;
+}
