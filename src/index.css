@@ -12,12 +12,36 @@ p {
 }
 
 .card {
+  width: min(900px, 100% - 2rem);
+  height: 40em;  
+  border: 1px solid black;
+  margin: 200px auto 100px;
+   transform-style: preserve-3d;
+   transition: transform 0.8s;
+  transform: perspective(2000px) rotateY(0deg);
+}
+
+.card.is-flipped {
+  transform: perspective(2000px) rotateX(180deg);   /* 原本是 rotateY */
+}
+
+
+.card-face {
   display: flex;
   border-radius: 20px;
   overflow: hidden; 
-  width: min(900px, 100% - 2rem);
+  inset: 0;
+  position: absolute;
   border: 1px solid black;
-  margin: 200px auto 100px;
+  backface-visibility: hidden;
+}
+
+.card-front .pokemon-image {
+  filter: brightness(0);    /* 只有正面是剪影 */
+}
+
+.card-back {
+  transform: rotateX(180deg);    /* 背面要預先轉過去 */
 }
 
 .card-content {
@@ -43,7 +67,6 @@ p {
 
 .pokemon-image {
   /* margin-right: 100px; */
-  filter: brightness(0);
 }
 
 @media (max-width: 960px) {
@@ -51,7 +74,6 @@ p {
     width: 250px;
     max-width: 100%;
     height: auto;
-    filter: brightness(0);
   }
 }
 
@@ -64,13 +86,13 @@ p {
 .type-container {
   flex:1;
   opacity: .6;
-  height: 40em;
+  height: 100%;
 }
 
 
 @media (max-width: 970px) {
     .type-container {
-      height: 55em
+      height: 100%
     }
 }
 

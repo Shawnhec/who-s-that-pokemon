@@ -14,41 +14,80 @@ function getRandomPokemon() {
 
 const App = () => {
   const [pokemon, setPokemon] = useState(getRandomPokemon);
+  const [flipped, setFlipped] = useState(false);
 
   function handleNextPokemon() {
+    setFlipped(false);
     setPokemon(getRandomPokemon());
   }
+
   return (
     <div className="app">
       <h1>Who's That Pokémon</h1>
       <h2>How good a Pokémon master are you? Test it out !</h2>
-      <div className="card">
-        {pokemon.type.map((t) => (
-          <div className={`type-container ${t.toLowerCase()}`}></div>
-        ))}
+      <div
+        className={`card ${flipped ? "is-flipped" : ""}`}
+        onClick={() => setFlipped((f) => !f)}
+      >
+        {/* Card front */}
+        <div className="card-face card-front">
+          {pokemon.type.map((t) => (
+            <div className={`type-container ${t.toLowerCase()}`}></div>
+          ))}
 
-        <div className="card-content">
-          <img
-            className="pokemon-image"
-            src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-          />
+          <div className="card-content">
+            {/* <img
+              className="pokemon-image"
+              src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+            /> */}
 
-          <div className="text-container">
-            <p>
-              Type:{" "}
-              <div className="type-row">
-                {pokemon.type.map((t) => (
-                  <span key={t} className={`type-badge ${t.toLowerCase()}`}>
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </p>
-            <p>Generation: {pokemon.generation}</p>
-            <p>Evolution: {pokemon.evolution}</p>
-            <p>
-              {pokemon.pokedexEntry}
-            </p>
+            <div className="text-container">
+              <p>
+                Type:{" "}
+                <div className="type-row">
+                  {pokemon.type.map((t) => (
+                    <span key={t} className={`type-badge ${t.toLowerCase()}`}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </p>
+              <p>Generation: {pokemon.generation}</p>
+              <p>Evolution: {pokemon.evolution}</p>
+              <p>{pokemon.pokedexEntry}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card back */}
+        <div className="card-face card-back">
+          {pokemon.type.map((t) => (
+            <div className={`type-container ${t.toLowerCase()}`}></div>
+          ))}
+
+          <div className="card-content">
+            {/* <img
+              className="pokemon-image"
+              src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+            /> */}
+
+            <div className="text-container">
+              <p>Name: {pokemon.name}</p>
+              <p>
+                Type:{" "}
+                <div className="type-row">
+                  {pokemon.type.map((t) => (
+                    <span key={t} className={`type-badge ${t.toLowerCase()}`}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </p>
+              <p>Generation: {pokemon.generation}</p>
+              <p>Evolution: {pokemon.evolution}</p>
+              <p>{pokemon.pokedexEntry}</p>
+            </div>
+          
           </div>
         </div>
       </div>
@@ -70,24 +109,6 @@ const App = () => {
           className="pokemon bottom"
         />
       </div> */}
-
-      <div class="flip-card">
-        <div class="flip-card-inner">
-          <div class="flip-card-front">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpCLsbe68LGYoFLzWXh2uPqxBXoz3WL8lJF5Lnrwq9hGN765tNG8VSHqP9&s=10"
-              alt="Avatar"
-              style={{ width: "300px", height: "300px" }}
-
-            ></img>
-          </div>
-          <div class="flip-card-back">
-            <h1>John Doe</h1>
-            <p>Architect & Engineer</p>
-            <p>We love that guy</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
