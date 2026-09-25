@@ -1,10 +1,8 @@
-:root {
-
-}
+:root {}
 
 * {
-    box-sizing: border-box;
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
 p {
@@ -13,23 +11,30 @@ p {
 
 .card {
   width: min(900px, 100% - 2rem);
-  height: 40em;  
+  height: 40em;
   border: 1px solid black;
+  border-radius: 20px;
   margin: 200px auto 100px;
-   transform-style: preserve-3d;
-   transition: transform 0.8s;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
   transform: perspective(2000px) rotateY(0deg);
+  /* will-change: transform; */
+}
+
+.card:hover {
+  cursor: pointer;
 }
 
 .card.is-flipped {
-  transform: perspective(2000px) rotateX(180deg);   /* 原本是 rotateY */
+  transform: perspective(2000px) rotateX(-180deg);
+  /* 原本是 rotateY */
 }
 
 
 .card-face {
   display: flex;
   border-radius: 20px;
-  overflow: hidden; 
+  overflow: hidden;
   inset: 0;
   position: absolute;
   border: 1px solid black;
@@ -37,36 +42,43 @@ p {
 }
 
 .card-front .pokemon-image {
-  filter: brightness(0);    /* 只有正面是剪影 */
+  filter: brightness(0);
+  /* 只有正面是剪影 */
 }
 
 .card-back {
-  transform: rotateX(180deg);    /* 背面要預先轉過去 */
+  transform: rotateX(180deg);
+  /* 背面要預先轉過去 */
 }
 
 .card-content {
   position: absolute;
-  inset: 0;                 /* 撐滿整張 card */
+  inset: 0;
+  /* 撐滿整張 card */
   display: flex;
-  align-items: center;      /* 垂直置中 */
-  justify-content: center;  /* 水平置中 */
-  gap: 24px;                /* 圖片和文字之間的間距 */
+  align-items: center;
+  /* 垂直置中 */
+  justify-content: center;
+  /* 水平置中 */
+  gap: 24px;
+  /* 圖片和文字之間的間距 */
   /* margin: 20px; */
 }
 
 @media (max-width: 970px) {
-  
-    .card-content {
-        display:block;
-    }
 
-    .type-container {
-      opacity: 1;
-    }
+  .card-content {
+    display: block;
+  }
+
+  .type-container {
+    opacity: 1;
+  }
 }
 
 .pokemon-image {
   /* margin-right: 100px; */
+
 }
 
 @media (max-width: 960px) {
@@ -84,16 +96,16 @@ p {
 }
 
 .type-container {
-  flex:1;
+  flex: 1;
   opacity: .6;
   height: 100%;
 }
 
 
 @media (max-width: 970px) {
-    .type-container {
-      height: 100%
-    }
+  .type-container {
+    height: 100%
+  }
 }
 
 .type-row {
@@ -109,91 +121,90 @@ p {
 }
 
 .normal {
-    background-color: #A8A77A;
+  background-color: #A8A77A;
 }
 
 .fire {
-    background-color: #EE8130;
+  background-color: #EE8130;
 }
 
 .water {
-    background-color: #6390F0;
+  background-color: #6390F0;
 }
 
 .electric {
-    background-color: #F7D02C;
+  background-color: #F7D02C;
 }
 
 .grass {
-    background-color: #7AC74C;
+  background-color: #7AC74C;
 }
 
 .ice {
-    background-color: #96D9D6;
+  background-color: #96D9D6;
 }
 
 .fighting {
-    background-color: #C22E28;
+  background-color: #C22E28;
 }
 
 .poison {
-    background-color: #A33EA1;
+  background-color: #A33EA1;
 }
 
 .ground {
-    background-color: #E2BF65;
+  background-color: #E2BF65;
 }
 
 .flying {
-    background-color: #A98FF3;
+  background-color: #A98FF3;
 }
 
 .psychic {
-    background-color: #F95587;
+  background-color: #F95587;
 }
 
 .bug {
-    background-color: #A6B91A;
+  background-color: #A6B91A;
 }
 
 .rock {
-    background-color: #B6A136;
+  background-color: #B6A136;
 }
 
 .ghost {
-    background-color: #735797;
+  background-color: #735797;
 }
 
 .dragon {
-    background-color: #6F35FC;
+  background-color: #6F35FC;
 }
 
 .dark {
-    background-color: #705746;
+  background-color: #705746;
 }
 
 .steel {
-    background-color: #B7B7CE;
+  background-color: #B7B7CE;
 }
 
 .fairy {
-    background-color: #D685AD;
+  background-color: #D685AD;
 }
 
 .button {
-  width:100px;
+  width: 100px;
   transition: transform 0.4s ease-out;
 }
 
 .button:hover {
   cursor: pointer;
-  transform: rotate(90deg);
+  transform: scale(1.1);
 }
 
 .button:active {
-  transform:scale(1.2);
+  transform: rotate(90deg)
 }
-
 
 
 
@@ -202,7 +213,7 @@ p {
 
 #pokemon {
   /* filter: brightness(0); */
-  
+
 }
 
 
@@ -211,29 +222,29 @@ p {
 
 
 .pokemon-silhouette {
-    position: relative;
-    width: 250px;
+  position: relative;
+  width: 250px;
 }
 
 .pokemon {
-    width: 250px;
-    display: block;
+  width: 250px;
+  display: block;
 }
 
 .top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    clip-path: inset(0 0 50% 0);
-    filter: brightness(0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: inset(0 0 50% 0);
+  filter: brightness(0);
 }
 
 .bottom {
-    position: absolute;
-    top: 0;
-    left: 0;
-    clip-path: inset(50% 0 0 0);
-    filter: brightness(0) invert(1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: inset(50% 0 0 0);
+  filter: brightness(0) invert(1);
 }
 
 
@@ -247,7 +258,8 @@ p {
   width: 300px;
   height: 200px;
   border: 1px solid #f1f1f1;
-  perspective: 1000px; /* Remove this if you don't want the 3D effect */
+  perspective: 1000px;
+  /* Remove this if you don't want the 3D effect */
 }
 
 /* This container is needed to position the front and back side */
@@ -266,11 +278,13 @@ p {
 }
 
 /* Position the front and back side */
-.flip-card-front, .flip-card-back {
+.flip-card-front,
+.flip-card-back {
   position: absolute;
   width: 100%;
   height: 100%;
-  -webkit-backface-visibility: hidden; /* Safari */
+  -webkit-backface-visibility: hidden;
+  /* Safari */
   backface-visibility: hidden;
 }
 

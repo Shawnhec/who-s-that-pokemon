@@ -8,7 +8,7 @@
     content: "";
     position: fixed;
     inset: 0; /* top, bottom, left, right = 0 */
-    background-image: url("https://www.gstatic.com/videogames/pokemon/pokeball.svg");
+    background-image: var(--wallpaper, url("https://www.gstatic.com/videogames/pokemon/pokeball.svg"));
     background-position: center;
     /* background-size: 600px; */
     opacity: 0.80;

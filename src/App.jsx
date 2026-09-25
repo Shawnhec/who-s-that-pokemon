@@ -1,6 +1,27 @@
 import { useState } from "react";
 import "./App.css";
 import { pokemons } from "./data/pokemon";
+import pokeball from "./assets/pokeball.webp";
+import greatball from "./assets/greatball.webp";
+import ultraball from "./assets/ultraball.webp";
+import pokeballRed from "./assets/pokeball-red.png";
+import pokeballBlue from "./assets/pokeball-blue.png";
+import pokeballYellow from "./assets/pokeball-yellow.png";
+import wallpaper1 from "./assets/wallpaper1.png";
+import wallpaper2 from "./assets/wallpaper2.svg";
+
+const THEMES = [
+  {
+    name: "classic",
+    wallpaper: wallpaper1,
+    balls: { next: pokeball, hint: greatball, theme: ultraball },
+  },
+  {
+    name: "modern",
+    wallpaper: wallpaper2,
+    balls: { next: pokeballRed, hint: pokeballBlue, theme: pokeballYellow },
+  },
+];
 
 function getRandomPokemon() {
   const idx = Math.floor(Math.random() * pokemons.length);
@@ -14,17 +35,29 @@ function getRandomPokemon() {
 
 const App = () => {
   const [pokemon, setPokemon] = useState(getRandomPokemon);
+  const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
+  const [themeIdx, setThemeIdx] = useState(0);
+
+  const theme = THEMES[themeIdx];
 
   function handleNextPokemon() {
     setFlipped(false);
     setPokemon(getRandomPokemon());
   }
 
+  function handleChangeTheme() {
+    setThemeIdx((i) => (i + 1) % THEMES.length);
+  }
+
   return (
-    <div className="app">
+    <div
+      className="app"
+      style={{ "--wallpaper": `url("${theme.wallpaper}")` }}
+    >
       <h1>Who's That Pokémon</h1>
       <h2>How good a Pokémon master are you? Test it out !</h2>
+      <h3>Number of Pokémons: {pokemons.length}</h3>
       <div
         className={`card ${flipped ? "is-flipped" : ""}`}
         onClick={() => setFlipped((f) => !f)}
@@ -36,10 +69,13 @@ const App = () => {
           ))}
 
           <div className="card-content">
-            {/* <img
-              className="pokemon-image"
-              src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-            /> */}
+            {showHint && (
+              <img
+                className="pokemon-image"
+                src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+                draggable="false"
+              />
+            )}
 
             <div className="text-container">
               <p>
@@ -66,10 +102,10 @@ const App = () => {
           ))}
 
           <div className="card-content">
-            {/* <img
+            <img
               className="pokemon-image"
               src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-            /> */}
+            />
 
             <div className="text-container">
               <p>Name: {pokemon.name}</p>
@@ -87,7 +123,6 @@ const App = () => {
               <p>Evolution: {pokemon.evolution}</p>
               <p>{pokemon.pokedexEntry}</p>
             </div>
-          
           </div>
         </div>
       </div>
@@ -95,9 +130,21 @@ const App = () => {
       <img
         title="Next"
         className="button"
-        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e8ddc4da-23dd-4502-b65b-378c9cfe5efa/dffpzbq-b6733f1e-ed37-489f-9761-6acd4bf7badd.png/v1/fill/w_1280,h_1280/pokeball_by_jormxdos_dffpzbq-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI4MCIsInBhdGgiOiIvZi9lOGRkYzRkYS0yM2RkLTQ1MDItYjY1Yi0zNzhjOWNmZTVlZmEvZGZmcHpicS1iNjczM2YxZS1lZDM3LTQ4OWYtOTc2MS02YWNkNGJmN2JhZGQucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.wUWVpX76Kd4tCiedeVq7qGCDU2euwEUsf9omKuWfxrU"
+        src={theme.balls.next}
         onClick={handleNextPokemon}
-      ></img>
+      />
+      <img
+        title="Show hint"
+        className="button"
+        src={theme.balls.hint}
+        onClick={() => setShowHint((s) => !s)}
+      />
+      <img
+        title="Change theme"
+        className="button"
+        src={theme.balls.theme}
+        onClick={handleChangeTheme}
+      />
 
       {/* <div className="pokemon-silhouette">
         <img
