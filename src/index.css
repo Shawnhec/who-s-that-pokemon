@@ -12,14 +12,13 @@ p {
 .card {
   width: min(900px, 100% - 2rem);
   height: 40em;
-  border: 1px solid black;
-  border-radius: 20px;
   margin: 200px auto 100px;
   transform-style: preserve-3d;
   transition: transform 0.5s;
-  transform: perspective(2000px) rotateY(0deg);
-  /* will-change: transform; */
+  transform: perspective(2000px) rotateX(0deg);
+  will-change: transform;
 }
+
 
 .card:hover {
   cursor: pointer;
@@ -33,11 +32,11 @@ p {
 
 .card-face {
   display: flex;
-  border-radius: 20px;
-  overflow: hidden;
   inset: 0;
   position: absolute;
   border: 1px solid black;
+  border-radius: 20px;
+  overflow: hidden;
   backface-visibility: hidden;
 }
 
