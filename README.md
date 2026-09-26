@@ -49,7 +49,7 @@ Here's a walkthrough of implemented required features:
 
 Click the image or link below to navigate to the video
 
-[![Video Walkthrough](https://www.youtube.com/watch?v=PQdos3rIXmg)(https://youtu.be/gznGsHgDWsw?si=yG9kRCeCl0Y7zxMm)]
+[![Video Walkthrough](https://img.youtube.com/vi/PQdos3rIXmg/maxresdefault.jpg)](https://www.youtube.com/watch?v=PQdos3rIXmg)
 URL: https://youtu.be/gznGsHgDWsw?si=yG9kRCeCl0Y7zxMm
 
 <!-- Replace this with whatever GIF tool you used! -->
