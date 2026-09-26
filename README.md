@@ -42,6 +42,7 @@ The following **additional** features are implemented:
 * [x] Clicking on a button reveals more information about the content on the back of the card
 * [x] Clicking on a button changes the wallpaper and theme of the application
 * [x] Responsive Web Design
+* [x] Deploy on Gihub Pages: https://shawnhec.github.io/who-s-that-pokemon/
 
 ## Video Walkthrough
 

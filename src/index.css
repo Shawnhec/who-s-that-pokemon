@@ -6,11 +6,11 @@
 }
 
 h1 {
-  font-size: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
+  font-size: clamp(2rem, 1.25rem + 2.5vw, 3rem);
 }
 
 h2 {
-    font-size: clamp(1rem, 0.7rem + 1vw, 1.5rem);
+    font-size: clamp(1rem, 0.7rem + 1vw, 1rem);
 }
 
 p {
@@ -20,25 +20,23 @@ p {
 
 .card {
   width: min(900px, 100% - 2rem);
-  height: 50em;
-  margin: 100px auto 100px;
+  height: 40em;
+  margin: 10px auto 10px;
   transform-style: preserve-3d;
   transition: transform 0.5s;
   transform: perspective(2000px) rotateX(0deg);
   will-change: transform;
 }
 
-@media (max-width:1440px) {
+/* @media (max-width:1440px) {
   .card {
     height: 40em;
-    margin:100px auto 10px;
   }
-}
+} */
 
 @media (min-width:200px) and (max-width: 600px) {
    .card {
     height: 30em;
-    margin:100px auto 10px;
   }
 }
 
