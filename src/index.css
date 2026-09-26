@@ -5,20 +5,50 @@
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
+h1 {
+  font-size: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
+  text-shadow: hsl(0, 0%, 99%) 0px 2px 1px;
+}
+
+h2 {
+    font-size: clamp(1rem, 0.7rem + 1vw, 1.5rem);
+}
+
 p {
-  font-size: 24px;
+  /* font-size: 24px; */
+   font-size: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
 }
 
 .card {
   width: min(900px, 100% - 2rem);
-  height: 40em;
-  margin: 200px auto 100px;
+  height: 50em;
+  margin: 100px auto 100px;
   transform-style: preserve-3d;
   transition: transform 0.5s;
   transform: perspective(2000px) rotateX(0deg);
   will-change: transform;
 }
 
+@media (max-width:1440px) {
+  .card {
+    height: 40em;
+    margin:1px auto 10px;
+  }
+}
+
+@media (min-width:200px) and (max-width: 600px) {
+   .card {
+    height: 30em;
+    margin:1px auto 10px;
+  }
+}
+
+/* @media (max-width:380) {
+  .card {
+    height: 90em;
+     margin:1px auto 10px;
+  }
+} */
 
 .card:hover {
   cursor: pointer;
@@ -26,7 +56,6 @@ p {
 
 .card.is-flipped {
   transform: perspective(2000px) rotateX(-180deg);
-  /* 原本是 rotateY */
 }
 
 
@@ -64,25 +93,31 @@ p {
   /* margin: 20px; */
 }
 
-@media (max-width: 970px) {
+@media (max-width: 960px) {
+
 
   .card-content {
-    display: block;
+    flex-direction: column;
   }
 
   .type-container {
     opacity: 1;
+    /* text-align: center; */
   }
 }
 
-.pokemon-image {
-  /* margin-right: 100px; */
 
+@media (min-width: 200px) and (max-width: 600px) {
+  .pokemon-image {
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
-@media (max-width: 960px) {
+@media (min-width: 601px) and (max-width: 960px) {
   .pokemon-image {
-    width: 250px;
+    width: 300px;
     max-width: 100%;
     height: auto;
   }
@@ -118,6 +153,12 @@ p {
   border: 1px solid black;
   border-radius: 10px;
 }
+
+/* @media (max-width: 970px) {
+  .type-container {
+    height: 100%
+  }
+} */
 
 .normal {
   background-color: #A8A77A;
@@ -196,6 +237,12 @@ p {
   transition: transform 0.4s ease-out;
 }
 
+@media (min-width:200px) and (max-width: 600px) {
+   .button {
+    width: 60px;
+  }
+}
+
 .button:hover {
   cursor: pointer;
   transform: scale(1.1);
@@ -206,14 +253,6 @@ p {
 }
 
 
-
-
-
-
-#pokemon {
-  /* filter: brightness(0); */
-
-}
 
 
 

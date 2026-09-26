@@ -56,8 +56,8 @@ const App = () => {
       style={{ "--wallpaper": `url("${theme.wallpaper}")` }}
     >
       <h1>Who's That Pokémon</h1>
-      <h2>How good a Pokémon master are you? Test it out !</h2>
-      <h3>Number of Pokémons: {pokemons.length}</h3>
+      <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
+      <p>Number of Pokémons: {pokemons.length}</p>
       <div
         className={`card ${flipped ? "is-flipped" : ""}`}
         onClick={() => setFlipped((f) => !f)}
