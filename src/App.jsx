@@ -193,19 +193,21 @@ const App = () => {
 
       <form className="guess-form" onSubmit={handleSubmit}>
         <label htmlFor="guess">Guess the Pokémon: </label>
-        <input
-          id="guess"
-          className={`guess-input ${feedback}`}
-          type="text"
-          placeholder="Who am I..."
-          value={guess}
-          onChange={(e) => {
-            setGuess(e.target.value);
-            setFeedback("");
-          }}
-        >
-        </input>
-        <button id="guess-button" type="submit">Check!</button>
+        <div className="guess-row">
+          <input
+            id="guess"
+            className={`guess-input ${feedback}`}
+            type="text"
+            placeholder="Who am I..."
+            value={guess}
+            onChange={(e) => {
+              setGuess(e.target.value);
+              setFeedback("");
+            }}
+          >
+          </input>
+          <button id="guess-button" type="submit">Check!</button>
+        </div>
       </form>
 
       <img
