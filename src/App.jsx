@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 import { pokemons } from "./data/pokemon";
 import pokeball from "./assets/pokeball.webp";
@@ -38,6 +38,11 @@ function normalize(str) {
   return str.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+// 手指觸控的裝置（手機、平板）
+function isTouchDevice() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
 const App = () => {
   const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
@@ -48,6 +53,9 @@ const App = () => {
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
   const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
+
+  const inputRef = useRef(null);
+  const scrollYRef = useRef(0); // 鍵盤出現前的捲動位置
 
   const pokemon = sequence[currIdx];
   const isFirst = currIdx == 0;
@@ -82,6 +90,11 @@ const App = () => {
   function handleSubmit(e) {
     e.preventDefault();
     if (!guess.trim()) return;
+
+    // 手機上送出後收起鍵盤，才看得到翻面或晃動
+    if (isTouchDevice()) {
+      inputRef.current.blur();
+    }
 
     const isCorrect = normalize(guess) === normalize(pokemon.name);
     setFeedback(isCorrect ? "correct" : "wrong");
@@ -201,6 +214,7 @@ const App = () => {
 
           <input
             id="guess"
+            ref={inputRef}
             className={`guess-input ${feedback}`}
             type="text"
             placeholder="Who am I..."
@@ -208,6 +222,14 @@ const App = () => {
             onChange={(e) => {
               setGuess(e.target.value);
               setFeedback("");
+            }}
+            onFocus={() => {
+              scrollYRef.current = window.scrollY;
+            }}
+            onBlur={() => {
+              if (isTouchDevice()) {
+                window.scrollTo({ top: scrollYRef.current, behavior: "smooth" });
+              }
             }}
           ></input>
           <button id="guess-button" type="submit">
