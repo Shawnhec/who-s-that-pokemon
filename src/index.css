@@ -61,7 +61,11 @@ p {
   }
 } */
 
-
+@keyframes shake {
+  0%, 100% { translate: 0; }
+  20%, 60% { translate: -10px; }
+  40%, 80% { translate: 10px; }
+}
 
 .card.wrong {
   animation: shake 0.4s ease-in-out;
@@ -274,8 +278,7 @@ p {
 
 @media (min-width: 200px) and (max-width: 600px) {
   .arrow {
-    width: 40px;;
-    height: 150px;
+   display: none;
   }
 }
 
@@ -306,11 +309,25 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+  justify-content: center;
 }
 
 .guess-row {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guess-row .arrow {
+  display: none;
+}
+
+@media (min-width: 200px) and (max-width: 600px) {
+  .guess-row .arrow  {
+    width: 40px;;
+    height: 40px;
+    display: inline-block;
+  }
 }
 
 label {

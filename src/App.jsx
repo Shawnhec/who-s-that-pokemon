@@ -25,7 +25,6 @@ const THEMES = [
 ];
 
 function getRandomPokemon() {
-
   const idx = Math.floor(Math.random() * pokemons.length);
   const selectedPokemon = pokemons[idx];
 
@@ -39,8 +38,6 @@ function normalize(str) {
   return str.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-
-
 const App = () => {
   const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
@@ -52,14 +49,14 @@ const App = () => {
   const [feedback, setFeedback] = useState("");
   const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
 
-   const pokemon = sequence[currIdx];
-   const isFirst = currIdx == 0;
+  const pokemon = sequence[currIdx];
+  const isFirst = currIdx == 0;
 
   const theme = THEMES[themeIdx];
 
   function handleNextPokemon() {
     resetGuess();
-    if(currIdx < sequence.length - 1) {
+    if (currIdx < sequence.length - 1) {
       setCurrIdx(currIdx + 1);
       setFlipped(true);
       return;
@@ -72,7 +69,7 @@ const App = () => {
   }
 
   function handlePreviousPokemon() {
-    if(currIdx === 0) return;
+    if (currIdx === 0) return;
     setCurrIdx(currIdx - 1);
     setFlipped(true);
     resetGuess();
@@ -84,24 +81,23 @@ const App = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if(!guess.trim()) return;
+    if (!guess.trim()) return;
 
     const isCorrect = normalize(guess) === normalize(pokemon.name);
     setFeedback(isCorrect ? "correct" : "wrong");
 
     //
-    if(isCorrect) {
+    if (isCorrect) {
       setFlipped(true);
-    }
-    else {
+    } else {
       setFlipped(false);
     }
   }
 
   function resetGuess() {
-  setGuess("");
-  setFeedback("");
-}
+    setGuess("");
+    setFeedback("");
+  }
 
   return (
     <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
@@ -109,10 +105,11 @@ const App = () => {
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
       <p className="stat">Number of Pokémons: {pokemons.length}</p>
       <div className="card-row">
-        <img 
-        className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`} 
-        src={arrow}
-        onClick={handlePreviousPokemon}></img>
+        <img
+          className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
+          src={arrow}
+          onClick={handlePreviousPokemon}
+        ></img>
 
         <div
           className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
@@ -159,7 +156,7 @@ const App = () => {
             ))}
 
             <div className="card-content">
-               {flipped && (
+              {flipped && (
                 <img
                   className="pokemon-image"
                   src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
@@ -186,14 +183,22 @@ const App = () => {
             </div>
           </div>
         </div>
-        <img className="button arrow arrow-right"
-         src={arrow}
-         onClick={handleNextPokemon}></img>
+        <img
+          className="button arrow arrow-right"
+          src={arrow}
+          onClick={handleNextPokemon}
+        ></img>
       </div>
 
       <form className="guess-form" onSubmit={handleSubmit}>
         <label htmlFor="guess">Guess the Pokémon: </label>
         <div className="guess-row">
+          <img
+            className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
+            src={arrow}
+            onClick={handlePreviousPokemon}
+          ></img>
+
           <input
             id="guess"
             className={`guess-input ${feedback}`}
@@ -204,9 +209,15 @@ const App = () => {
               setGuess(e.target.value);
               setFeedback("");
             }}
-          >
-          </input>
-          <button id="guess-button" type="submit">Check!</button>
+          ></input>
+          <button id="guess-button" type="submit">
+            Check!
+          </button>
+          <img
+            className="button arrow arrow-right"
+            src={arrow}
+            onClick={handleNextPokemon}
+          ></img>
         </div>
       </form>
 

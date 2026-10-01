@@ -254,7 +254,7 @@ export const pokemons = [
   },
   {
     pokedexNumber: 29,
-    name: "Nidoran-F",
+    name: "Nidoran",
     type: ["Poison"],
     generation: 1,
     evolution: "1/3",
@@ -281,7 +281,7 @@ export const pokemons = [
   },
   {
     pokedexNumber: 32,
-    name: "Nidoran-M",
+    name: "Nidoran",
     type: ["Poison"],
     generation: 1,
     evolution: "1/3",
