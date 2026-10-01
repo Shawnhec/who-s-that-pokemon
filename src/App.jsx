@@ -85,7 +85,7 @@ const App = () => {
     <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
       <h1>Who's That Pokémon</h1>
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
-      <p>Number of Pokémons: {pokemons.length}</p>
+      <p className="stat">Number of Pokémons: {pokemons.length}</p>
       <div className="card-row">
         <img className="button arrow arrow-left" src={arrow}></img>
 
@@ -175,7 +175,7 @@ const App = () => {
           }}
         >
         </input>
-        <button type="submit">Go</button>
+        <button id="guess-button" type="submit">Check!</button>
       </form>
 
       <img

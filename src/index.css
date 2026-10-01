@@ -1,4 +1,5 @@
-:root {}
+:root {
+}
 
 * {
   box-sizing: border-box;
@@ -7,22 +8,28 @@
 
 h1 {
   font-size: clamp(2rem, 1.25rem + 2.5vw, 3rem);
+    text-shadow: 1px 1px 3px white;
 }
 
 h2 {
-    font-size: clamp(1rem, 0.7rem + 1vw, 1rem);
+  /* font-size: 24px; */
+  font-size: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
 }
 
 p {
-  /* font-size: 24px; */
-   font-size: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
+  font-size: clamp(1rem, 0.7rem + 1vw, 1rem);
+}
+
+.stat {
+   font-size: larger;
+  font-weight:900;
 }
 
 .card-row {
   display: flex;
-  align-items: center; 
-  justify-content: center;  
-   gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
 
 .card {
@@ -41,8 +48,8 @@ p {
   }
 } */
 
-@media (min-width:200px) and (max-width: 600px) {
-   .card {
+@media (min-width: 200px) and (max-width: 600px) {
+  .card {
     height: 28em;
   }
 }
@@ -55,9 +62,18 @@ p {
 } */
 
 @keyframes shake {
-  0%, 100% { translate: 0; }
-  20%, 60% { translate: -10px; }
-  40%, 80% { translate: 10px; }
+  0%,
+  100% {
+    translate: 0;
+  }
+  20%,
+  60% {
+    translate: -10px;
+  }
+  40%,
+  80% {
+    translate: 10px;
+  }
 }
 
 .card.wrong {
@@ -72,7 +88,6 @@ p {
   transform: perspective(2000px) rotateX(-180deg);
 }
 
-
 .card-face {
   display: flex;
   inset: 0;
@@ -82,8 +97,6 @@ p {
   overflow: hidden;
   backface-visibility: hidden;
 }
-
-
 
 .card-front .pokemon-image {
   filter: brightness(0);
@@ -110,8 +123,6 @@ p {
 }
 
 @media (max-width: 960px) {
-
-
   .card-content {
     flex-direction: column;
   }
@@ -145,19 +156,18 @@ p {
 .text-container {
   text-align: left;
   margin-right: 50px;
-  margin-left: 50px
+  margin-left: 50px;
 }
 
 .type-container {
   flex: 1;
-  opacity: .6;
+  opacity: 0.6;
   height: 100%;
 }
 
-
 @media (max-width: 970px) {
   .type-container {
-    height: 100%
+    height: 100%;
   }
 }
 
@@ -180,55 +190,55 @@ p {
 } */
 
 .normal {
-  background-color: #A8A77A;
+  background-color: #a8a77a;
 }
 
 .fire {
-  background-color: #EE8130;
+  background-color: #ee8130;
 }
 
 .water {
-  background-color: #6390F0;
+  background-color: #6390f0;
 }
 
 .electric {
-  background-color: #F7D02C;
+  background-color: #f7d02c;
 }
 
 .grass {
-  background-color: #7AC74C;
+  background-color: #7ac74c;
 }
 
 .ice {
-  background-color: #96D9D6;
+  background-color: #96d9d6;
 }
 
 .fighting {
-  background-color: #C22E28;
+  background-color: #c22e28;
 }
 
 .poison {
-  background-color: #A33EA1;
+  background-color: #a33ea1;
 }
 
 .ground {
-  background-color: #E2BF65;
+  background-color: #e2bf65;
 }
 
 .flying {
-  background-color: #A98FF3;
+  background-color: #a98ff3;
 }
 
 .psychic {
-  background-color: #F95587;
+  background-color: #f95587;
 }
 
 .bug {
-  background-color: #A6B91A;
+  background-color: #a6b91a;
 }
 
 .rock {
-  background-color: #B6A136;
+  background-color: #b6a136;
 }
 
 .ghost {
@@ -236,7 +246,7 @@ p {
 }
 
 .dragon {
-  background-color: #6F35FC;
+  background-color: #6f35fc;
 }
 
 .dark {
@@ -244,11 +254,11 @@ p {
 }
 
 .steel {
-  background-color: #B7B7CE;
+  background-color: #b7b7ce;
 }
 
 .fairy {
-  background-color: #D685AD;
+  background-color: #d685ad;
 }
 
 .button {
@@ -256,10 +266,8 @@ p {
   transition: transform 0.4s ease-out;
 }
 
-
-
-@media (min-width:200px) and (max-width: 600px) {
-   .button {
+@media (min-width: 200px) and (max-width: 600px) {
+  .button {
     width: 60px;
   }
 }
@@ -270,7 +278,7 @@ p {
 }
 
 .ball:active {
-  transform: rotate(90deg)
+  transform: rotate(90deg);
 }
 
 .arrow {
@@ -299,10 +307,32 @@ p {
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
-.guess-input {
-  border-radius: 10px;
-  font-size: 16px;
+.guess-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
+
+label {
+  font-size: larger;
+  font-weight:900;
+  text-shadow: 1px 1px 3px white;
+}
+
+input {
+  outline: none;
+  border: 1px solid #999;
+  border-radius: 10px;
+  width: 120px;
+  height: 100%;
+}
+
+.guess-input {
+  font-size: medium;
+  font-weight:900;
+}
+
 
 .guess-input.correct {
   border: 2px solid #2e7d32;
@@ -314,16 +344,21 @@ p {
   background-color: #ffebee;
 }
 
+#guess-button {
+  border: 1px solid #999;
+  border-radius: 10px;
+  font-weight: 900;
+  font-size:medium;
+  cursor: pointer;
+  border: transparent;
 
+}
 
-
-
-
-
-
-
-
-
+#guess-button:hover{
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+   color: #ffffff;
+   background-color: black;
+}
 
 .pokemon-silhouette {
   position: relative;
@@ -350,11 +385,6 @@ p {
   clip-path: inset(50% 0 0 0);
   filter: brightness(0) invert(1);
 }
-
-
-
-
-
 
 /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
 .flip-card {
