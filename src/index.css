@@ -54,6 +54,16 @@ p {
   }
 } */
 
+@keyframes shake {
+  0%, 100% { translate: 0; }
+  20%, 60% { translate: -10px; }
+  40%, 80% { translate: 10px; }
+}
+
+.card.wrong {
+  animation: shake 0.4s ease-in-out;
+}
+
 .card:hover {
   cursor: pointer;
 }
@@ -72,6 +82,8 @@ p {
   overflow: hidden;
   backface-visibility: hidden;
 }
+
+
 
 .card-front .pokemon-image {
   filter: brightness(0);
@@ -265,6 +277,18 @@ p {
   opacity: 0.6;
 }
 
+.arrow.is-end {
+  opacity: 0.2;
+}
+
+.arrow.is-end:hover {
+  cursor: not-allowed;
+  opacity: 0.2;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
 .arrow-left {
   rotate: calc(-180deg);
 }
@@ -272,7 +296,31 @@ p {
 .arrow:hover {
   opacity: 1;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
+
+.guess-input {
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.guess-input.correct {
+  border: 2px solid #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.guess-input.wrong {
+  border: 2px solid #c62828;
+  background-color: #ffebee;
+}
+
+
+
+
+
+
+
+
 
 
 

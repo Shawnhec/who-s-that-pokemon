@@ -34,21 +34,51 @@ function getRandomPokemon() {
   };
 }
 
+function normalize(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+
+
 const App = () => {
   const [pokemon, setPokemon] = useState(getRandomPokemon);
   const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
-  const [themeIdx, setThemeIdx] = useState(0);
+  const [themeIdx, setThemeIdx] = useState(1);
+
+  //new states
+  const [currIdx, setCurrIdx] = useState(0);
+  const [guess, setGuess] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [sequence, setSequence] = useState([]);
 
   const theme = THEMES[themeIdx];
 
   function handleNextPokemon() {
     setFlipped(false);
     setPokemon(getRandomPokemon());
+    setGuess("");
+    setFeedback("");
   }
 
   function handleChangeTheme() {
     setThemeIdx((i) => (i + 1) % THEMES.length);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if(!guess.trim()) return;
+
+    const isCorrect = normalize(guess) === normalize(pokemon.name);
+    setFeedback(isCorrect ? "correct" : "wrong");
+
+    //
+    if(isCorrect) {
+      setFlipped(true);
+    }
+    else {
+      setFlipped(false);
+    }
   }
 
   return (
@@ -60,8 +90,9 @@ const App = () => {
         <img className="button arrow arrow-left" src={arrow}></img>
 
         <div
-          className={`card ${flipped ? "is-flipped" : ""}`}
+          className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
           onClick={() => setFlipped((f) => !f)}
+          onAnimationEnd={() => setFeedback("")}
         >
           {/* Card front */}
           <div className="card-face card-front">
@@ -129,6 +160,23 @@ const App = () => {
         </div>
         <img className="button arrow arrow-right" src={arrow}></img>
       </div>
+
+      <form className="guess-form" onSubmit={handleSubmit}>
+        <label htmlFor="guess">Guess the Pokémon: </label>
+        <input
+          id="guess"
+          className={`guess-input ${feedback}`}
+          type="text"
+          placeholder="Who am I..."
+          value={guess}
+          onChange={(e) => {
+            setGuess(e.target.value);
+            setFeedback("");
+          }}
+        >
+        </input>
+        <button type="submit">Go</button>
+      </form>
 
       <img
         title="Next"
