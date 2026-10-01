@@ -25,6 +25,7 @@ const THEMES = [
 ];
 
 function getRandomPokemon() {
+
   const idx = Math.floor(Math.random() * pokemons.length);
   const selectedPokemon = pokemons[idx];
 
@@ -41,7 +42,6 @@ function normalize(str) {
 
 
 const App = () => {
-  const [pokemon, setPokemon] = useState(getRandomPokemon);
   const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
   const [themeIdx, setThemeIdx] = useState(1);
@@ -50,15 +50,32 @@ const App = () => {
   const [currIdx, setCurrIdx] = useState(0);
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [sequence, setSequence] = useState([]);
+  const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
+
+   const pokemon = sequence[currIdx];
+   const isFirst = currIdx == 0;
 
   const theme = THEMES[themeIdx];
 
   function handleNextPokemon() {
+    resetGuess();
+    if(currIdx < sequence.length - 1) {
+      setCurrIdx(currIdx + 1);
+      setFlipped(true);
+      return;
+    }
+
+    const next = getRandomPokemon();
+    setSequence((s) => [...s, next]);
+    setCurrIdx(sequence.length);
     setFlipped(false);
-    setPokemon(getRandomPokemon());
-    setGuess("");
-    setFeedback("");
+  }
+
+  function handlePreviousPokemon() {
+    if(currIdx === 0) return;
+    setCurrIdx(currIdx - 1);
+    setFlipped(true);
+    resetGuess();
   }
 
   function handleChangeTheme() {
@@ -81,13 +98,21 @@ const App = () => {
     }
   }
 
+  function resetGuess() {
+  setGuess("");
+  setFeedback("");
+}
+
   return (
     <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
       <h1>Who's That Pokémon</h1>
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
       <p className="stat">Number of Pokémons: {pokemons.length}</p>
       <div className="card-row">
-        <img className="button arrow arrow-left" src={arrow}></img>
+        <img 
+        className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`} 
+        src={arrow}
+        onClick={handlePreviousPokemon}></img>
 
         <div
           className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
@@ -134,13 +159,16 @@ const App = () => {
             ))}
 
             <div className="card-content">
-              <img
-                className="pokemon-image"
-                src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-              />
+               {flipped && (
+                <img
+                  className="pokemon-image"
+                  src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+                  draggable="false"
+                />
+              )}
 
               <div className="text-container">
-                <p>Name: {pokemon.name}</p>
+                <p>Name: {flipped && pokemon.name}</p>
                 <p>
                   Type:{" "}
                   <div className="type-row">
@@ -158,7 +186,9 @@ const App = () => {
             </div>
           </div>
         </div>
-        <img className="button arrow arrow-right" src={arrow}></img>
+        <img className="button arrow arrow-right"
+         src={arrow}
+         onClick={handleNextPokemon}></img>
       </div>
 
       <form className="guess-form" onSubmit={handleSubmit}>
