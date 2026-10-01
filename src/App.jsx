@@ -9,6 +9,7 @@ import pokeballBlue from "./assets/pokeball-blue.png";
 import pokeballYellow from "./assets/pokeball-yellow.png";
 import wallpaper1 from "./assets/wallpaper1.png";
 import wallpaper2 from "./assets/wallpaper2.svg";
+import arrow from ".//assets/arrow.png";
 
 const THEMES = [
   {
@@ -51,97 +52,99 @@ const App = () => {
   }
 
   return (
-    <div
-      className="app"
-      style={{ "--wallpaper": `url("${theme.wallpaper}")` }}
-    >
+    <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
       <h1>Who's That Pokémon</h1>
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
       <p>Number of Pokémons: {pokemons.length}</p>
-      <div
-        className={`card ${flipped ? "is-flipped" : ""}`}
-        onClick={() => setFlipped((f) => !f)}
-      >
-        {/* Card front */}
-        <div className="card-face card-front">
-          {pokemon.type.map((t) => (
-            <div className={`type-container ${t.toLowerCase()}`}></div>
-          ))}
+      <div className="card-row">
+        <img className="button arrow arrow-left" src={arrow}></img>
 
-          <div className="card-content">
-            {showHint && (
+        <div
+          className={`card ${flipped ? "is-flipped" : ""}`}
+          onClick={() => setFlipped((f) => !f)}
+        >
+          {/* Card front */}
+          <div className="card-face card-front">
+            {pokemon.type.map((t) => (
+              <div className={`type-container ${t.toLowerCase()}`}></div>
+            ))}
+
+            <div className="card-content">
+              {showHint && (
+                <img
+                  className="pokemon-image"
+                  src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+                  draggable="false"
+                />
+              )}
+
+              <div className="text-container">
+                <p>
+                  Type:{" "}
+                  <div className="type-row">
+                    {pokemon.type.map((t) => (
+                      <span key={t} className={`type-badge ${t.toLowerCase()}`}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </p>
+                <p>Generation: {pokemon.generation}</p>
+                <p>Evolution: {pokemon.evolution}</p>
+                <p>{pokemon.pokedexEntry}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card back */}
+          <div className="card-face card-back">
+            {pokemon.type.map((t) => (
+              <div className={`type-container ${t.toLowerCase()}`}></div>
+            ))}
+
+            <div className="card-content">
               <img
                 className="pokemon-image"
                 src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-                draggable="false"
               />
-            )}
 
-            <div className="text-container">
-              <p>
-                Type:{" "}
-                <div className="type-row">
-                  {pokemon.type.map((t) => (
-                    <span key={t} className={`type-badge ${t.toLowerCase()}`}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </p>
-              <p>Generation: {pokemon.generation}</p>
-              <p>Evolution: {pokemon.evolution}</p>
-              <p>{pokemon.pokedexEntry}</p>
+              <div className="text-container">
+                <p>Name: {pokemon.name}</p>
+                <p>
+                  Type:{" "}
+                  <div className="type-row">
+                    {pokemon.type.map((t) => (
+                      <span key={t} className={`type-badge ${t.toLowerCase()}`}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </p>
+                <p>Generation: {pokemon.generation}</p>
+                <p>Evolution: {pokemon.evolution}</p>
+                <p>{pokemon.pokedexEntry}</p>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Card back */}
-        <div className="card-face card-back">
-          {pokemon.type.map((t) => (
-            <div className={`type-container ${t.toLowerCase()}`}></div>
-          ))}
-
-          <div className="card-content">
-            <img
-              className="pokemon-image"
-              src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-            />
-
-            <div className="text-container">
-              <p>Name: {pokemon.name}</p>
-              <p>
-                Type:{" "}
-                <div className="type-row">
-                  {pokemon.type.map((t) => (
-                    <span key={t} className={`type-badge ${t.toLowerCase()}`}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </p>
-              <p>Generation: {pokemon.generation}</p>
-              <p>Evolution: {pokemon.evolution}</p>
-              <p>{pokemon.pokedexEntry}</p>
-            </div>
-          </div>
-        </div>
+        <img className="button arrow arrow-right" src={arrow}></img>
       </div>
 
       <img
         title="Next"
-        className="button"
+        className="button ball"
         src={theme.balls.next}
         onClick={handleNextPokemon}
       />
       <img
         title="Show hint"
-        className="button"
+        className="button ball"
         src={theme.balls.hint}
         onClick={() => setShowHint((s) => !s)}
       />
       <img
         title="Change theme"
-        className="button"
+        className="button ball"
         src={theme.balls.theme}
         onClick={handleChangeTheme}
       />
