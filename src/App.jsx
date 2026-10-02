@@ -70,10 +70,9 @@ const App = () => {
     e.preventDefault();
 
     const value = Number(initInputRef.current.value);
-    // if(!Number.isInteger(value)) 
 
     if (isTouchDevice()) {
-      guessInputRef.current.blur();
+      initInputRef.current.blur();
     }
     setTotalGuess(value);
   }
