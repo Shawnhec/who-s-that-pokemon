@@ -2,6 +2,13 @@
     position: relative;
     text-align: center;
     background-color: #FFFFFF;
+     min-height: 100vh;
+     min-height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
 }
 
 .app::before {

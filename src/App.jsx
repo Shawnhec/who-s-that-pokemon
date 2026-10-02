@@ -51,12 +51,13 @@ const App = () => {
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
   const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
-  const [totalGuess, setTotalGuess] = useState(10);
+  const [totalGuess, setTotalGuess] = useState(0);
   const [streak, setStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
-  const [correctCnt, setCorrectCnt] = useState(0)  
+  const [correctCnt, setCorrectCnt] = useState(0);
 
-  const inputRef = useRef(null);
+  const guessInputRef = useRef(null);
+  const initInputRef = useRef(null);
   const scrollYRef = useRef(0); // 鍵盤出現前的捲動位置
 
   const pokemon = sequence[currIdx];
@@ -65,14 +66,23 @@ const App = () => {
 
   const theme = THEMES[themeIdx];
 
+  function handleInit(e) {
+    e.preventDefault();
+
+    const value = Number(initInputRef.current.value);
+    // if(!Number.isInteger(value)) 
+
+    if (isTouchDevice()) {
+      guessInputRef.current.blur();
+    }
+    setTotalGuess(value);
+  }
+
   function handleNextPokemon() {
     if (currIdx == totalGuess - 1 && flipped) {
-      alert(`Your score is ${(correctCnt / 10 * 100).toFixed(2) + "%" }`)
+      alert(`Your score is ${((correctCnt / 10) * 100).toFixed(2) + "%"}`);
     }
     if (currIdx === totalGuess - 1) return;
-
-
-
 
     resetGuess();
     if (currIdx < sequence.length - 1) {
@@ -98,13 +108,13 @@ const App = () => {
     setThemeIdx((i) => (i + 1) % THEMES.length);
   }
 
-  function handleSubmit(e) {
+  function handleGuess(e) {
     e.preventDefault();
     if (!guess.trim()) return;
 
     // 手機上送出後收起鍵盤，才看得到翻面或晃動
     if (isTouchDevice()) {
-      inputRef.current.blur();
+      guessInputRef.current.blur();
     }
 
     const isCorrect = normalize(guess) === normalize(pokemon.name);
@@ -112,7 +122,7 @@ const App = () => {
 
     if (isCorrect) {
       if (!flipped) {
-        const newCorrectCnt = correctCnt + 1; 
+        const newCorrectCnt = correctCnt + 1;
         setCorrectCnt(newCorrectCnt);
       }
       const newStreak = streak + 1;
@@ -133,6 +143,7 @@ const App = () => {
     setStreak(0);
     setLongestStreak(0);
     setCorrectCnt(0);
+    setTotalGuess(0);
     resetGuess();
   }
 
@@ -146,104 +157,17 @@ const App = () => {
       <h1>Who's That Pokémon</h1>
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
       <p className="stat">Number of Pokémons: {pokemons.length}</p>
-      <div className="game-stat-row">
-        <p className="stat">Streak: {streak}</p>
-        <p className="stat">Longest Streak: {longestStreak}</p>
-        <p className="stat">Score: { (correctCnt / 10 * 100).toFixed(2) + "%" }
-        </p>
-        <p className="stat">Progress: {currIdx + 1 + " / " + totalGuess} </p>
-      </div>
-      <div className="card-row">
-        <img
-          className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
-          src={arrow}
-          onClick={handlePreviousPokemon}
-          draggable="false"
-        ></img>
-
-        <div
-          className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
-          onClick={() => setFlipped((f) => !f)}
-          onAnimationEnd={() => setFeedback("")}
-        >
-          {/* Card front */}
-          <div className="card-face card-front">
-            {pokemon.type.map((t) => (
-              <div className={`type-container ${t.toLowerCase()}`}></div>
-            ))}
-
-            <div className="card-content">
-              {showHint && (
-                <img
-                  className="pokemon-image"
-                  src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-                  draggable="false"
-                />
-              )}
-
-              <div className="text-container">
-                <p>
-                  Type:{" "}
-                  <div className="type-row">
-                    {pokemon.type.map((t) => (
-                      <span key={t} className={`type-badge ${t.toLowerCase()}`}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </p>
-                <p>Generation: {pokemon.generation}</p>
-                <p>Evolution: {pokemon.evolution}</p>
-                <p>{pokemon.pokedexEntry}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Card back */}
-          <div className="card-face card-back">
-            {pokemon.type.map((t) => (
-              <div className={`type-container ${t.toLowerCase()}`}></div>
-            ))}
-
-            <div className="card-content">
-              {flipped && (
-                <img
-                  className="pokemon-image"
-                  src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
-                  draggable="false"
-                />
-              )}
-
-              <div className="text-container">
-                <p>Name: {flipped && pokemon.name}</p>
-                <p>
-                  Type:{" "}
-                  <div className="type-row">
-                    {pokemon.type.map((t) => (
-                      <span key={t} className={`type-badge ${t.toLowerCase()}`}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </p>
-                <p>Generation: {pokemon.generation}</p>
-                <p>Evolution: {pokemon.evolution}</p>
-                <p>{pokemon.pokedexEntry}</p>
-              </div>
-            </div>
-          </div>
+      { totalGuess != 0 ? 
+      <div className="guess-container">
+        <div className="guess-stat-row">
+          <p className="stat">Streak: {streak}</p>
+          <p className="stat">Longest Streak: {longestStreak}</p>
+          <p className="stat">
+            Score: {((correctCnt / 10) * 100).toFixed(2) + "%"}
+          </p>
+          <p className="stat">Progress: {currIdx + 1 + " / " + totalGuess} </p>
         </div>
-        <img
-          className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
-          src={arrow}
-          onClick={handleNextPokemon}
-          draggable="false"
-        ></img>
-      </div>
-
-      <form className="guess-form" onSubmit={handleSubmit}>
-        <label htmlFor="guess">Guess the Pokémon: </label>
-        <div className="guess-row">
+        <div className="card-row">
           <img
             className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
             src={arrow}
@@ -251,56 +175,195 @@ const App = () => {
             draggable="false"
           ></img>
 
-          <input
-            id="guess"
-            ref={inputRef}
-            className={`guess-input ${feedback}`}
-            type="text"
-            placeholder="Who am I..."
-            value={guess}
-            onChange={(e) => {
-              setGuess(e.target.value);
-              setFeedback("");
-            }}
-            onFocus={() => {
-              scrollYRef.current = window.scrollY;
-            }}
-            onBlur={() => {
-              if (isTouchDevice()) {
-                window.scrollTo({ top: scrollYRef.current, behavior: "smooth" });
-              }
-            }}
-          ></input>
-          <button id="guess-button" type="submit">
-            Check!
-          </button>
+          <div
+            className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
+            onClick={() => setFlipped((f) => !f)}
+            onAnimationEnd={() => setFeedback("")}
+          >
+            {/* Card front */}
+            <div className="card-face card-front">
+              {pokemon.type.map((t) => (
+                <div className={`type-container ${t.toLowerCase()}`}></div>
+              ))}
+
+              <div className="card-content">
+                {showHint && (
+                  <img
+                    className="pokemon-image"
+                    src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+                    draggable="false"
+                  />
+                )}
+
+                <div className="text-container">
+                  <p>
+                    Type:{" "}
+                    <div className="type-row">
+                      {pokemon.type.map((t) => (
+                        <span
+                          key={t}
+                          className={`type-badge ${t.toLowerCase()}`}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </p>
+                  <p>Generation: {pokemon.generation}</p>
+                  <p>Evolution: {pokemon.evolution}</p>
+                  <p>{pokemon.pokedexEntry}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card back */}
+            <div className="card-face card-back">
+              {pokemon.type.map((t) => (
+                <div className={`type-container ${t.toLowerCase()}`}></div>
+              ))}
+
+              <div className="card-content">
+                {flipped && (
+                  <img
+                    className="pokemon-image"
+                    src={`https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${pokemon.pokedexNumber}.png`}
+                    draggable="false"
+                  />
+                )}
+
+                <div className="text-container">
+                  <p>Name: {flipped && pokemon.name}</p>
+                  <p>
+                    Type:{" "}
+                    <div className="type-row">
+                      {pokemon.type.map((t) => (
+                        <span
+                          key={t}
+                          className={`type-badge ${t.toLowerCase()}`}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </p>
+                  <p>Generation: {pokemon.generation}</p>
+                  <p>Evolution: {pokemon.evolution}</p>
+                  <p>{pokemon.pokedexEntry}</p>
+                </div>
+              </div>
+            </div>
+          </div>
           <img
-             className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
+            className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
             src={arrow}
             onClick={handleNextPokemon}
             draggable="false"
           ></img>
         </div>
-      </form>
 
-      <img
-        title="Show hint"
-        className="button ball"
-        src={theme.balls.hint}
-        onClick={() => setShowHint((s) => !s)}
-      />
-      <img
-        title="Change Theme"
-        className="button ball"
-        src={theme.balls.theme}
-        onClick={handleChangeTheme}
-      />
-      <img
-        title="Reset Game"
-        className="button ball"
-        src={theme.balls.reset}
-        onClick={handleResetGame}
-      />
+        <form className="guess-form" onSubmit={handleGuess}>
+          <label htmlFor="guess">Guess the Pokémon: </label>
+          <div className="input-row">
+            <img
+              className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
+              src={arrow}
+              onClick={handlePreviousPokemon}
+              draggable="false"
+            ></img>
+
+            <input
+              id="guess"
+              ref={guessInputRef}
+              className={`guess-input ${feedback}`}
+              type="text"
+              placeholder="Who am I..."
+              value={guess}
+              onChange={(e) => {
+                setGuess(e.target.value);
+                setFeedback("");
+              }}
+              onFocus={() => {
+                scrollYRef.current = window.scrollY;
+              }}
+              onBlur={() => {
+                if (isTouchDevice()) {
+                  window.scrollTo({
+                    top: scrollYRef.current,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+            ></input>
+            <button className="submit-button" type="submit">
+              Check!
+            </button>
+            <img
+              className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
+              src={arrow}
+              onClick={handleNextPokemon}
+              draggable="false"
+            ></img>
+          </div>
+        </form>
+      </div>
+
+      : ""}
+      {totalGuess == 0 ? (
+        <form className="init-form" onSubmit={handleInit}>
+          <label htmlFor="total-guess">
+            Choose the number of challenges:{" "}
+          </label>
+          <div className="input-row">
+            <input
+              id="total-guess"
+              ref={initInputRef}
+              className={`guess-input ${feedback}`}
+              type="number"
+              // defaultValue={10}
+              placeholder="Enter the number..."
+              min={10}
+              step="1"
+              onFocus={() => {
+                scrollYRef.current = window.scrollY;
+              }}
+              onBlur={() => {
+                if (isTouchDevice()) {
+                  window.scrollTo({
+                    top: scrollYRef.current,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+            ></input>
+            <button className="submit-button" type="submit">
+              Go!
+            </button>
+          </div>
+        </form>
+      ) : (
+        ""
+      )}
+
+      <div className="util-row">
+        <img
+          title="Show hint"
+          className="button ball"
+          src={theme.balls.hint}
+          onClick={() => setShowHint((s) => !s)}
+        />
+        <img
+          title="Change Theme"
+          className="button ball"
+          src={theme.balls.theme}
+          onClick={handleChangeTheme}
+        />
+        <img
+          title="Reset Game"
+          className="button ball"
+          src={theme.balls.reset}
+          onClick={handleResetGame}
+        />
+      </div>
 
       {/* <div className="pokemon-silhouette">
         <img

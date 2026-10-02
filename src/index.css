@@ -10,43 +10,45 @@ h1 {
   font-size: clamp(2rem, 1.25rem + 2.5vw, 3rem);
   text-shadow: 1px 1px 3px white;
   font-weight: 900;
+  margin: 0;
 }
 
 h2 {
   /* font-size: 24px; */
   font-size: clamp(1rem, 0.8rem + 0.6vw, 1.5rem);
+  text-shadow: 1px 1px 3px white;
+  margin: 0;
 }
 
 p {
   font-size: clamp(1rem, 0.7rem + 1vw, 1rem);
-
 }
 
 .stat {
   font-size: large;
   font-weight: 900;
+  text-shadow: 1px 1px 3px white;
   margin: 16px;
 }
 
-.game-stat-row {
+.guess-stat-row {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
-
-.game-stat-row .stat {
+.guess-stat-row .stat {
   font-size: medium;
-  font-weight: 600;
+  font-weight: 900;
   margin: 0px;
 }
 
 @media (min-width: 200px) and (max-width: 600px) {
-  .game-stat-row {
+  .guess-stat-row {
     gap: 4px;
   }
 
-  .game-stat-row .stat {
+  .guess-stat-row .stat {
     font-size:small;
     font-weight:600;
   }
@@ -308,6 +310,12 @@ p {
   transform: rotate(90deg);
 }
 
+.util-row {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+}
+
 .arrow {
   opacity: 0.6;
 }
@@ -340,25 +348,26 @@ p {
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
-.guess-form {
+form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.guess-row {
+.input-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
-.guess-row .arrow {
+.input-row .arrow {
   display: none;
 }
 
 @media (min-width: 200px) and (max-width: 600px) {
-  .guess-row .arrow {
+  .input-row .arrow {
     width: 40px;
     height: 40px;
     display: inline-block;
@@ -375,7 +384,7 @@ input {
   outline: none;
   border: 2px solid #999;
   border-radius: 10px;
-  width: 120px;
+  width: 180px;
   height: 100%;
 }
 
@@ -394,7 +403,7 @@ input {
   background-color: #ffebee;
 }
 
-#guess-button {
+.submit-button {
   outline: none;
   border: 2px solid #999;
   border-radius: 10px;
@@ -405,7 +414,7 @@ input {
   border: transparent;
 }
 
-#guess-button:hover {
+.submit-button:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   color: #ffffff;
   background-color: black;
