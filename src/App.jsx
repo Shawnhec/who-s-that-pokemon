@@ -15,12 +15,12 @@ const THEMES = [
   {
     name: "classic",
     wallpaper: wallpaper1,
-    balls: { next: pokeball, hint: greatball, theme: ultraball },
+    balls: { hint: pokeball, theme: greatball, reset: ultraball },
   },
   {
     name: "modern",
     wallpaper: wallpaper2,
-    balls: { next: pokeballRed, hint: pokeballBlue, theme: pokeballYellow },
+    balls: { hint: pokeballRed, theme: pokeballBlue, reset: pokeballYellow },
   },
 ];
 
@@ -51,20 +51,33 @@ const App = () => {
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
   const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
+  const [totalGuess, setTotalGuess] = useState(10);
+  const [streak, setStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
+  const [correctCnt, setCorrectCnt] = useState(0)  
 
   const inputRef = useRef(null);
   const scrollYRef = useRef(0); // 鍵盤出現前的捲動位置
 
   const pokemon = sequence[currIdx];
   const isFirst = currIdx == 0;
+  const isLast = currIdx == totalGuess - 1;
 
   const theme = THEMES[themeIdx];
 
   function handleNextPokemon() {
+    if (currIdx == totalGuess - 1 && flipped) {
+      alert(`Your score is ${(correctCnt / 10 * 100).toFixed(2) + "%" }`)
+    }
+    if (currIdx === totalGuess - 1) return;
+
+
+
+
     resetGuess();
     if (currIdx < sequence.length - 1) {
       setCurrIdx(currIdx + 1);
-      setFlipped(true);
+      setFlipped(false);
       return;
     }
 
@@ -77,7 +90,7 @@ const App = () => {
   function handlePreviousPokemon() {
     if (currIdx === 0) return;
     setCurrIdx(currIdx - 1);
-    setFlipped(true);
+    setFlipped(false);
     resetGuess();
   }
 
@@ -97,12 +110,30 @@ const App = () => {
     const isCorrect = normalize(guess) === normalize(pokemon.name);
     setFeedback(isCorrect ? "correct" : "wrong");
 
-    //
     if (isCorrect) {
+      if (!flipped) {
+        const newCorrectCnt = correctCnt + 1; 
+        setCorrectCnt(newCorrectCnt);
+      }
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      setLongestStreak(Math.max(longestStreak, newStreak));
+
       setFlipped(true);
     } else {
+      setStreak(0);
       setFlipped(false);
     }
+  }
+
+  function handleResetGame() {
+    setSequence([getRandomPokemon()]);
+    setFlipped(false);
+    setCurrIdx(0);
+    setStreak(0);
+    setLongestStreak(0);
+    setCorrectCnt(0);
+    resetGuess();
   }
 
   function resetGuess() {
@@ -115,6 +146,13 @@ const App = () => {
       <h1>Who's That Pokémon</h1>
       <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
       <p className="stat">Number of Pokémons: {pokemons.length}</p>
+      <div className="game-stat-row">
+        <p className="stat">Streak: {streak}</p>
+        <p className="stat">Longest Streak: {longestStreak}</p>
+        <p className="stat">Score: { (correctCnt / 10 * 100).toFixed(2) + "%" }
+        </p>
+        <p className="stat">Progress: {currIdx + 1 + " / " + totalGuess} </p>
+      </div>
       <div className="card-row">
         <img
           className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
@@ -196,7 +234,7 @@ const App = () => {
           </div>
         </div>
         <img
-          className="button arrow arrow-right"
+          className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
           src={arrow}
           onClick={handleNextPokemon}
           draggable="false"
@@ -237,7 +275,7 @@ const App = () => {
             Check!
           </button>
           <img
-            className="button arrow arrow-right"
+             className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
             src={arrow}
             onClick={handleNextPokemon}
             draggable="false"
@@ -246,22 +284,22 @@ const App = () => {
       </form>
 
       <img
-        title="Next"
-        className="button ball"
-        src={theme.balls.next}
-        onClick={handleNextPokemon}
-      />
-      <img
         title="Show hint"
         className="button ball"
         src={theme.balls.hint}
         onClick={() => setShowHint((s) => !s)}
       />
       <img
-        title="Change theme"
+        title="Change Theme"
         className="button ball"
         src={theme.balls.theme}
         onClick={handleChangeTheme}
+      />
+      <img
+        title="Reset Game"
+        className="button ball"
+        src={theme.balls.reset}
+        onClick={handleResetGame}
       />
 
       {/* <div className="pokemon-silhouette">
