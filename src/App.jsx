@@ -80,7 +80,7 @@ const App = () => {
 
   function handleNextPokemon() {
     if (currIdx == totalGuess - 1 && flipped) {
-      alert(`Your score is ${((correctCnt / 10) * 100).toFixed(2) + "%"}`);
+      alert(`Your score is ${((correctCnt / totalGuess) * 100).toFixed(2) + "%"}`);
     }
     if (currIdx === totalGuess - 1) return;
 
@@ -163,7 +163,7 @@ const App = () => {
           <p className="stat">Streak: {streak}</p>
           <p className="stat">Longest Streak: {longestStreak}</p>
           <p className="stat">
-            Score: {((correctCnt / 10) * 100).toFixed(2) + "%"}
+            Score: {((correctCnt / totalGuess) * 100).toFixed(2) + "%"}
           </p>
           <p className="stat">Progress: {currIdx + 1 + " / " + totalGuess} </p>
         </div>
