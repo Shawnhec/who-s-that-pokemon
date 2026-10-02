@@ -47,8 +47,6 @@ const App = () => {
   const [showHint, setShowHint] = useState(false);
   const [flipped, setFlipped] = useState(false);
   const [themeIdx, setThemeIdx] = useState(1);
-
-  //new states
   const [currIdx, setCurrIdx] = useState(0);
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -122,6 +120,7 @@ const App = () => {
           className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
           src={arrow}
           onClick={handlePreviousPokemon}
+          draggable="false"
         ></img>
 
         <div
@@ -200,6 +199,7 @@ const App = () => {
           className="button arrow arrow-right"
           src={arrow}
           onClick={handleNextPokemon}
+          draggable="false"
         ></img>
       </div>
 
@@ -210,6 +210,7 @@ const App = () => {
             className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
             src={arrow}
             onClick={handlePreviousPokemon}
+            draggable="false"
           ></img>
 
           <input
@@ -239,6 +240,7 @@ const App = () => {
             className="button arrow arrow-right"
             src={arrow}
             onClick={handleNextPokemon}
+            draggable="false"
           ></img>
         </div>
       </form>
