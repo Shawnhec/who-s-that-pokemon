@@ -163,7 +163,7 @@ const App = () => {
       setFlipped(true);
       markRevealed(currIdx);
     } else {
-      // setStreak(0);
+      setStreak(0);
       setFlipped(false);
     }
   }
