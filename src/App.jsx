@@ -69,7 +69,9 @@ const App = () => {
 
       if (e.key === "ArrowUp") {
         e.preventDefault();
-        setFlipped(true); // ↑ 翻到背面看答案
+        // markRevealed(currIdx);
+        // setFlipped(true); // ↑ 翻到背面看答案
+        handleReveal();
       }
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -97,6 +99,14 @@ const App = () => {
       initInputRef.current.blur();
     }
     setTotalGuess(value);
+  }
+
+  function handleReveal() {
+    if(!pokemon.revealed) {
+      markRevealed(currIdx);
+      setStreak(0);
+    }
+    setFlipped((f) => !f);
   }
 
   function handleNextPokemon() {
@@ -144,17 +154,16 @@ const App = () => {
     setFeedback(isCorrect ? "correct" : "wrong");
 
     if (isCorrect) {
-      if (!flipped) {
-        const newCorrectCnt = correctCnt + 1;
-        setCorrectCnt(newCorrectCnt);
+      if (!pokemon.revealed) {
+        setCorrectCnt(correctCnt + 1);
+        const newStreak = streak + 1;
+        setStreak(newStreak);
+        setLongestStreak(Math.max(longestStreak, newStreak));
       }
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      setLongestStreak(Math.max(longestStreak, newStreak));
-
       setFlipped(true);
+      markRevealed(currIdx);
     } else {
-      setStreak(0);
+      // setStreak(0);
       setFlipped(false);
     }
   }
@@ -168,6 +177,12 @@ const App = () => {
     setCorrectCnt(0);
     setTotalGuess(0);
     resetGuess();
+  }
+
+  function markRevealed(idx) {
+    setSequence((s) => {
+      return s.map((p, i) => i === idx ? {...p, revealed: true} : p)
+    })
   }
 
   function resetGuess() {
@@ -202,7 +217,7 @@ const App = () => {
 
             <div
               className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
-              onClick={() => setFlipped((f) => !f)}
+              onClick={handleReveal}
               onAnimationEnd={() => setFeedback("")}
             >
               {/* Card front */}
