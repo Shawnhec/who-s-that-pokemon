@@ -1,37 +1,82 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import { pokemons } from "./data/pokemon";
-import pokeball from "./assets/pokeball.webp";
-import greatball from "./assets/greatball.webp";
-import ultraball from "./assets/ultraball.webp";
+import pokeBall from "./assets/pokeball.webp";
+import greatBall from "./assets/greatball.webp";
+import ultraBall from "./assets/ultraball.webp";
+import masterBall from "./assets/masterball.webp";
 import pokeballRed from "./assets/pokeball-red.png";
 import pokeballBlue from "./assets/pokeball-blue.png";
 import pokeballYellow from "./assets/pokeball-yellow.png";
+import pokeballPurple from "./assets/pokeball-purple.png";
 import wallpaper1 from "./assets/wallpaper1.png";
 import wallpaper2 from "./assets/wallpaper2.svg";
-import arrow from ".//assets/arrow.png";
+import ModeButton from "./components/ModeButton";
+import ArrowButton from "./components/ArrowButton";
 
 const THEMES = [
   {
     name: "classic",
     wallpaper: wallpaper1,
-    balls: { hint: pokeball, theme: greatball, reset: ultraball },
+    levels: {
+      beginner: pokeBall,
+      intermediate: greatBall,
+      advanced: ultraBall,
+      master: masterBall,
+    },
   },
   {
     name: "modern",
     wallpaper: wallpaper2,
-    balls: { hint: pokeballRed, theme: pokeballBlue, reset: pokeballYellow },
+    levels: {
+      beginner: pokeballRed,
+      intermediate: pokeballBlue,
+      advanced: pokeballYellow,
+      master: pokeballPurple,
+    },
   },
 ];
 
-function getRandomPokemon() {
-  const idx = Math.floor(Math.random() * pokemons.length);
-  const selectedPokemon = pokemons[idx];
+const TIME_LIMIT = 15;
 
+// 開始畫面顯示的難度說明
+const LEVEL_INFO = {
+  beginner:
+    "No score, no pressure. Use hints, shuffle the deck, and set aside the Pokémon you've mastered.",
+  intermediate:
+    "Your score counts now. Hints are still on and you can move freely, but a wrong guess resets your streak!",
+  advanced:
+    "No hints. You can't move on until you name the Pokémon or flip the card to give up.",
+  master: `No hints, no skipping, and only ${TIME_LIMIT} seconds per card. When time runs out, the card flips and your streak resets.`,
+};
+
+function formatPokemon(p) {
   return {
-    ...selectedPokemon,
-    pokedexNumber: selectedPokemon.pokedexNumber.toString().padStart(3, "0"),
+    ...p,
+    pokedexNumber: p.pokedexNumber.toString().padStart(3, "0"),
   };
+}
+
+// Fisher–Yates：回傳洗好的新陣列，不改到原本的陣列
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 除了 keepIdx 那張，其他卡片重新洗牌
+function shuffleExcept(arr, keepIdx) {
+  const others = shuffle(arr.filter((_, i) => i !== keepIdx));
+  others.splice(keepIdx, 0, arr[keepIdx]);
+  return others;
+}
+
+// 洗牌後取前 n 隻，同一隻不會出現兩次
+function drawDeck(n) {
+  return shuffle(pokemons).slice(0, n).map(formatPokemon);
 }
 
 function normalize(str) {
@@ -50,11 +95,15 @@ const App = () => {
   const [currIdx, setCurrIdx] = useState(0);
   const [guess, setGuess] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [sequence, setSequence] = useState(() => [getRandomPokemon()]);
+  const [sequence, setSequence] = useState([]);
   const [totalGuess, setTotalGuess] = useState(0);
   const [streak, setStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [correctCnt, setCorrectCnt] = useState(0);
+  const [mode, setMode] = useState(""); // "challenge" 計分 | "practice" 練習
+  const [level, setLevel] = useState("beginner");
+  const [mastered, setMastered] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
 
   const guessInputRef = useRef(null);
   const initInputRef = useRef(null);
@@ -62,10 +111,14 @@ const App = () => {
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (totalGuess === 0) return;
+      if (totalGuess === 0 || sequence.length === 0) return;
       const typing = e.target.tagName === "INPUT";
-      if (typing && (e.key === "ArrowLeft" || e.key === "ArrowRight") && !flipped) return;
-      
+      if (
+        typing &&
+        (e.key === "ArrowLeft" || e.key === "ArrowRight") &&
+        !flipped
+      )
+        return;
 
       if (e.key === "ArrowUp") {
         e.preventDefault();
@@ -85,24 +138,58 @@ const App = () => {
   });
 
   const pokemon = sequence[currIdx];
-  const isFirst = currIdx == 0;
-  const isLast = currIdx == totalGuess - 1;
+  const isFirst = currIdx === 0;
+  const isLast = currIdx === sequence.length - 1;
+  const hintEnabled = mode === "beginner" || mode === "intermediate";
+  const mustGuess = mode === "advanced" || mode === "master";
+  const nextLocked = mustGuess && !pokemon?.revealed;
 
   const theme = THEMES[themeIdx];
+  const timed = mode === "master";
+  const timeStatus = timeLeft <= 5 ? "danger" : timeLeft <= 10 ? "warning" : "safe";
+
+  // Master：每張還沒揭曉的卡倒數 TIME_LIMIT 秒
+  useEffect(() => {
+    if (!timed || !pokemon || pokemon.revealed) return; // 不需要倒數
+
+    const id = setTimeout(() => {
+      if (timeLeft > 1) {
+        setTimeLeft(timeLeft - 1);
+        return;
+      }
+      // 時間到：當作放棄這張
+      setSequence((s) =>
+        s.map((p, i) => (i === currIdx ? { ...p, revealed: true } : p)),
+      );
+      setStreak(0);
+      setFlipped(true);
+      // setFeedback("wrong");
+      setTimeLeft(TIME_LIMIT);
+    }, 1000);
+
+    return () => clearTimeout(id);
+  }, [timed, pokemon, timeLeft, currIdx]);
 
   function handleInit(e) {
     e.preventDefault();
 
-    const value = Number(initInputRef.current.value);
+    const input = initInputRef.current.value;
+    const value = input === "" ? 10 : Number(input); // 沒填就用 10 張
+    if (!Number.isInteger(value) || value < 1 || value > pokemons.length)
+      return;
 
     if (isTouchDevice()) {
       initInputRef.current.blur();
     }
+    setMode(level);
+    setSequence(drawDeck(value));
+    setCurrIdx(0);
     setTotalGuess(value);
+    setTimeLeft(TIME_LIMIT);
   }
 
   function handleReveal() {
-    if(!pokemon.revealed) {
+    if (!pokemon.revealed) {
       markRevealed(currIdx);
       setStreak(0);
     }
@@ -110,24 +197,23 @@ const App = () => {
   }
 
   function handleNextPokemon() {
-    if (currIdx == totalGuess - 1 && flipped) {
-      alert(
-        `Your score is ${((correctCnt / totalGuess) * 100).toFixed(2) + "%"}`,
-      );
-    }
-    if (currIdx === totalGuess - 1) return;
-
-    resetGuess();
-    if (currIdx < sequence.length - 1) {
-      setCurrIdx(currIdx + 1);
-      setFlipped(false);
+    if (nextLocked) {
+      alert("You must reveal the card or answer the challenge first!");
       return;
     }
 
-    const next = getRandomPokemon();
-    setSequence((s) => [...s, next]);
-    setCurrIdx(sequence.length);
+    if (isLast) {
+      if (flipped) {
+        alert(
+          `Your score is ${((correctCnt / totalGuess) * 100).toFixed(2) + "%"}`,
+        );
+      }
+      return;
+    }
+
+    setCurrIdx(currIdx + 1);
     setFlipped(false);
+    resetGuess();
   }
 
   function handlePreviousPokemon() {
@@ -169,20 +255,45 @@ const App = () => {
   }
 
   function handleResetGame() {
-    setSequence([getRandomPokemon()]);
+    setSequence([]);
+    setMastered([]);
     setFlipped(false);
     setCurrIdx(0);
     setStreak(0);
     setLongestStreak(0);
     setCorrectCnt(0);
     setTotalGuess(0);
+    setLevel("beginner");
+    setShowHint(false);
+    setMode("");
+    setTimeLeft(TIME_LIMIT);
+    resetGuess();
+  }
+
+  // 練習模式：目前這張不動，其他卡片重新洗牌
+  function handleShuffle() {
+    setSequence((s) => shuffleExcept(s, currIdx));
+  }
+
+  // 練習模式：把目前這張移到已精通清單
+  function handleMaster() {
+    const remaining = sequence.filter((_, i) => i !== currIdx);
+    setSequence(remaining);
+    setMastered([...mastered, pokemon]);
+
+    // 拿掉的是最後一張就往前退一格；否則後面那張會補到目前的位置
+    if (currIdx >= remaining.length) {
+      setCurrIdx(Math.max(0, remaining.length - 1));
+    }
+    setFlipped(false);
     resetGuess();
   }
 
   function markRevealed(idx) {
     setSequence((s) => {
-      return s.map((p, i) => i === idx ? {...p, revealed: true} : p)
-    })
+      return s.map((p, i) => (i === idx ? { ...p, revealed: true } : p));
+    });
+    setTimeLeft(TIME_LIMIT); // 這張揭曉了，計時器重設給下一張
   }
 
   function resetGuess() {
@@ -193,27 +304,63 @@ const App = () => {
   return (
     <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
       <h1>Who's That Pokémon</h1>
-      <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
-      <p className="stat">Number of Pokémons: {pokemons.length}</p>
-      {totalGuess != 0 ? (
-        <div className="guess-container">
-          <div className="guess-stat-row">
-            <p className="stat">Streak: {streak}</p>
-            <p className="stat">Longest Streak: {longestStreak}</p>
-            <p className="stat">
-              Score: {((correctCnt / totalGuess) * 100).toFixed(2) + "%"}
-            </p>
-            <p className="stat">
-              Progress: {currIdx + 1 + " / " + totalGuess}{" "}
-            </p>
+      {mode === "" ? (
+        <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
+      ) : (
+        ""
+      )}
+      <p className="stat">
+        Number of Pokémons: {mode === "" ? pokemons.length : totalGuess}
+      </p>
+      {timed && !pokemon?.revealed && (
+        <div className="timer">
+          <p className="stat timer-text">Time: {timeLeft}s</p>
+          <div className="timer-bar">
+            <div
+              className={`timer-fill ${timeStatus}`}
+              style={{ width: `${(timeLeft / TIME_LIMIT) * 100}%` }}
+            />
           </div>
+        </div>
+      )}
+
+      {totalGuess != 0 && sequence.length > 0 ? (
+        <div className="guess-container">
+          {mode == "beginner" ? (
+            <>
+              <div className="guess-stat-row">
+                {/* <p className="stat">Practice Mode</p> */}
+                <p className="stat">Cards left: {sequence.length}</p>
+                <p className="stat">Mastered: {mastered.length}</p>
+              </div>
+              <div className="practice-row">
+                {/* <button
+                  className="submit-button"
+                  type="button"
+                  onClick={handleShuffle}
+                >
+                  Shuffle
+                </button> */}
+              </div>
+            </>
+          ) : (
+            <div className="guess-stat-row">
+              <p className="stat">Streak: {streak}</p>
+              <p className="stat">Longest Streak: {longestStreak}</p>
+              <p className="stat">
+                Score: {((correctCnt / totalGuess) * 100).toFixed(2) + "%"}
+              </p>
+              <p className="stat">
+                Progress: {currIdx + 1 + " / " + totalGuess}{" "}
+              </p>
+            </div>
+          )}
           <div className="card-row">
-            <img
-              className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
-              src={arrow}
+            <ArrowButton
+              direction="left"
+              disabled={isFirst}
               onClick={handlePreviousPokemon}
-              draggable="false"
-            ></img>
+            />
 
             <div
               className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
@@ -293,89 +440,135 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <img
-              className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
-              src={arrow}
+            <ArrowButton
+              direction="right"
+              disabled={isLast || nextLocked}
               onClick={handleNextPokemon}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowRight") {
-                  handleNextPokemon();
-                }
-              }}
-              draggable="false"
-            ></img>
+            />
           </div>
+          {mode != "beginner" && (
+            <form className="guess-form" onSubmit={handleGuess}>
+              <div className="input-row">
+                <label htmlFor="guess">Guess the Pokémon: </label>
+                <input
+                  id="guess"
+                  ref={guessInputRef}
+                  className={`input ${feedback}`}
+                  type="text"
+                  placeholder="Who am I..."
+                  value={guess}
+                  onChange={(e) => {
+                    setGuess(e.target.value);
+                    setFeedback("");
+                  }}
+                  onFocus={() => {
+                    scrollYRef.current = window.scrollY;
+                  }}
+                  onBlur={() => {
+                    if (isTouchDevice()) {
+                      window.scrollTo({
+                        top: scrollYRef.current,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                ></input>
+              </div>
+            </form>
+          )}
 
-          <form className="guess-form" onSubmit={handleGuess}>
-            <label htmlFor="guess">Guess the Pokémon: </label>
-            <div className="input-row">
-              <img
-                className={`button arrow arrow-left ${isFirst ? "is-end" : ""}`}
-                src={arrow}
-                onClick={handlePreviousPokemon}
-                onKeyDown={(e) => {
-                  if (e.key === "ArrowLeft") {
-                    handlePreviousPokemon();
-                  }
-                }}
-                draggable="false"
-              ></img>
-
-              <input
-                id="guess"
-                ref={guessInputRef}
-                className={`guess-input ${feedback}`}
-                type="text"
-                placeholder="Who am I..."
-                value={guess}
-                onChange={(e) => {
-                  setGuess(e.target.value);
-                  setFeedback("");
-                }}
-                onFocus={() => {
-                  scrollYRef.current = window.scrollY;
-                }}
-                onBlur={() => {
-                  if (isTouchDevice()) {
-                    window.scrollTo({
-                      top: scrollYRef.current,
-                      behavior: "smooth",
-                    });
-                  }
-                }}
-              ></input>
+          <div className="button-row">
+            <ArrowButton
+              direction="left"
+              disabled={isFirst}
+              onClick={handlePreviousPokemon}
+            />
+            {mode != "beginner" && (
               <button className="submit-button" type="submit">
                 Check!
               </button>
-              <img
-                className={`button arrow arrow-right ${isLast ? "is-end" : ""}`}
-                src={arrow}
-                onClick={handleNextPokemon}
-                onKeyDown={(e) => {
-                  if (e.key === "ArrowRight") {
-                    handleNextPokemon();
-                  }
-                }}
-                draggable="false"
-              ></img>
-            </div>
-          </form>
+            )}
+            {hintEnabled && (
+              <button
+                type="button"
+                className="submit-button"
+                onClick={() => setShowHint((s) => !s)}
+              >
+                {!showHint ? "Show hint" : "Hide hint"}
+              </button>
+            )}
+            {mode == "beginner" && (
+              <button
+                className="submit-button"
+                type="button"
+                onClick={handleShuffle}
+              >
+                Shuffle
+              </button>
+            )}
+            {mode == "beginner" && (
+              <button
+                className="submit-button"
+                type="button"
+                onClick={handleMaster}
+              >
+                Mastered ✓
+              </button>
+            )}
+            <ArrowButton
+              direction="right"
+              disabled={isLast || nextLocked}
+              onClick={handleNextPokemon}
+            />
+          </div>
         </div>
       ) : (
         ""
       )}
-      {totalGuess == 0 ? (
+
+      {totalGuess != 0 && sequence.length === 0 && (
+        <p className="stat">You've mastered every card! 🎉</p>
+      )}
+
+      {mode == "beginner" && totalGuess != 0 && mastered.length > 0 && (
+        <div className="mastered-list">
+          <p className="stat">Mastered Pokémon:</p>
+          <div className="mastered-chips">
+            {mastered.map((p) => (
+              <span key={p.pokedexNumber} className="mastered-chip">
+                {p.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {mode == "" ? (
         <form className="init-form" onSubmit={handleInit}>
-          <label htmlFor="total-guess">Choose the number of challenges: </label>
+          <div className="mode-row">
+            {["beginner", "intermediate", "advanced", "master"].map((lv) => (
+              <ModeButton
+                key={lv}
+                src={theme.levels[lv]}
+                selected={level === lv}
+                onClick={() => setLevel(lv)}
+              >
+                {lv[0].toUpperCase() + lv.slice(1)}
+              </ModeButton>
+            ))}
+          </div>
+          <p className="level-description">{LEVEL_INFO[level]}</p>
+
+          <label htmlFor="total-guess">Choose the number of cards: </label>
           <div className="input-row">
             <input
               id="total-guess"
               ref={initInputRef}
-              className={`guess-input ${feedback}`}
+              className={`input ${feedback}`}
               type="number"
-              // defaultValue={10}
               placeholder="Enter the number..."
-              min={10}
+              min={1}
+              max={pokemons.length}
               step="1"
               onFocus={() => {
                 scrollYRef.current = window.scrollY;
@@ -399,24 +592,12 @@ const App = () => {
       )}
 
       <div className="util-row">
-        <img
-          title="Show hint"
-          className="button ball"
-          src={theme.balls.hint}
-          onClick={() => setShowHint((s) => !s)}
-        />
-        <img
-          title="Change Theme"
-          className="button ball"
-          src={theme.balls.theme}
-          onClick={handleChangeTheme}
-        />
-        <img
-          title="Reset Game"
-          className="button ball"
-          src={theme.balls.reset}
-          onClick={handleResetGame}
-        />
+        <button className="submit-button" onClick={handleChangeTheme}>
+          Change theme
+        </button>
+        <button className="submit-button" onClick={handleResetGame}>
+          Reset game
+        </button>
       </div>
 
       {/* <div className="pokemon-silhouette">

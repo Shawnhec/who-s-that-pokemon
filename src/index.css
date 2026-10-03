@@ -31,6 +31,51 @@ p {
   margin: 16px;
 }
 
+/* Master 倒數進度條 */
+.timer {
+  width: min(400px, 80%);
+  margin: 0 auto;
+}
+
+.timer-text {
+  margin: 4px 0;
+}
+
+/* 灰色的底槽 */
+.timer-bar {
+  height: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.85); 
+  overflow: hidden;
+}
+
+/*inline style decides the width */
+.timer-fill {
+  height: 100%;
+  /* border-radius: 5px; */
+  transition: width 1s linear, background-color 0.3s;
+}
+
+.timer-fill.safe {
+  background-color: #2e7d32;
+}
+
+.timer-fill.warning {
+  background-color: #f9a825;
+}
+
+.timer-fill.danger {
+  background-color: #c62828;
+  animation: blink 0.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.4; }
+}
+
+
+
 .guess-stat-row {
   display: flex;
   justify-content: space-evenly;
@@ -362,12 +407,23 @@ form {
   gap: 8px;
 }
 
-.input-row .arrow {
+/* .input-row .arrow {
+  display: none;
+} */
+
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-row .arrow {
   display: none;
 }
 
 @media (min-width: 200px) and (max-width: 600px) {
-  .input-row .arrow {
+  .button-row .arrow {
     width: 40px;
     height: 40px;
     display: inline-block;
@@ -386,12 +442,16 @@ input {
   border-radius: 10px;
   width: 180px;
   height: 100%;
-}
-
-.guess-input {
   font-size: medium;
   font-weight: 900;
 }
+
+@media (min-width: 200px) and (max-width: 600px) {
+  #guess {
+    width: 120px;
+  }
+}
+
 
 .guess-input.correct {
   border: 2px solid #2e7d32;
@@ -419,6 +479,135 @@ input {
   color: #ffffff;
   background-color: black;
 }
+
+/* 模式選擇 */
+.mode-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* 選中難度的說明文字 */
+.level-description {
+  max-width: 480px;
+  min-height: 3em; /* 預留兩行高度，切換難度時下面的表單不會跳動 */
+  margin: 0 auto 12px;
+  padding: 0 16px;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px white;
+}
+
+@media (min-width: 200px) and (max-width: 600px) {
+  .level-description {
+    min-height: 4.5em; /* 手機上最多三行 */
+  }
+}
+
+
+/* 已精通清單 */
+.mastered-list {
+  margin: 16px;
+}
+
+.mastered-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mastered-chip {
+  padding: 2px 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+
+
+/* 文字浮在球上面的按鈕 */
+.ball-button {
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* 圖片和文字放進同一格，疊在一起；後面的 span 會蓋在圖片上 */
+.ball-button > * {
+  grid-area: 1 / 1;
+}
+
+.ball-button-image {
+  width: 100px;
+  transition: transform 0.4s ease-out;
+}
+
+/* 只有球會放大、轉動，文字保持不動才看得清楚 */
+.ball-button:hover .ball-button-image {
+  transform: scale(1.1);
+}
+
+.ball-button:active .ball-button-image {
+  transform: scale(1.1) rotate(90deg);
+}
+
+.ball-button-label {
+  position: relative; /* 有 transform 的圖片會被畫在上層，文字也要提升到上層 */
+  z-index: 1;
+  font-size: medium;
+  font-weight: 900;
+  text-shadow: 0 0 4px white, 0 0 8px white;
+  pointer-events: none;
+}
+
+/* 沒選中的模式變淡 */
+.ball-button:not(.selected) {
+  opacity: 0.5;
+}
+
+@media (min-width: 200px) and (max-width: 600px) {
+  .ball-button-image {
+    width: 60px;
+  }
+
+  .ball-button-label {
+    font-size: small;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .pokemon-silhouette {
   position: relative;
@@ -494,3 +683,4 @@ input {
   color: white;
   transform: rotateY(180deg);
 }
+
