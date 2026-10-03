@@ -6,6 +6,10 @@
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
+body {
+  margin: 0;
+}
+
 h1 {
   font-size: clamp(2rem, 1.25rem + 2.5vw, 3rem);
   text-shadow: 1px 1px 3px white;
@@ -135,6 +139,10 @@ p {
   }
 } */
 
+.card.wrong {
+  animation: shake 0.4s ease-in-out;
+}
+
 @keyframes shake {
   0%,
   100% {
@@ -148,10 +156,6 @@ p {
   80% {
     translate: 10px;
   }
-}
-
-.card.wrong {
-  animation: shake 0.4s ease-in-out;
 }
 
 .card:hover {

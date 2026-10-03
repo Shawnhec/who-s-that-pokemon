@@ -13,6 +13,7 @@ import wallpaper1 from "./assets/wallpaper1.png";
 import wallpaper2 from "./assets/wallpaper2.svg";
 import ModeButton from "./components/ModeButton";
 import ArrowButton from "./components/ArrowButton";
+import Timer from "./components/Timer";
 
 const THEMES = [
   {
@@ -146,6 +147,7 @@ const App = () => {
 
   const theme = THEMES[themeIdx];
   const timed = mode === "master";
+
   const timeStatus = timeLeft <= 5 ? "danger" : timeLeft <= 10 ? "warning" : "safe";
 
   // Master：每張還沒揭曉的卡倒數 TIME_LIMIT 秒
@@ -302,7 +304,7 @@ const App = () => {
   }
 
   return (
-    <div className="app" style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
+    <div className={`app ${timeStatus}`} style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
       <h1>Who's That Pokémon</h1>
       {mode === "" ? (
         <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
@@ -313,15 +315,7 @@ const App = () => {
         Number of Pokémons: {mode === "" ? pokemons.length : totalGuess}
       </p>
       {timed && !pokemon?.revealed && (
-        <div className="timer">
-          <p className="stat timer-text">Time: {timeLeft}s</p>
-          <div className="timer-bar">
-            <div
-              className={`timer-fill ${timeStatus}`}
-              style={{ width: `${(timeLeft / TIME_LIMIT) * 100}%` }}
-            />
-          </div>
-        </div>
+        <Timer timeLeft={timeLeft} total={TIME_LIMIT} />
       )}
 
       {totalGuess != 0 && sequence.length > 0 ? (
@@ -363,7 +357,7 @@ const App = () => {
             />
 
             <div
-              className={`card ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
+              className={`card ${timeStatus} ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
               onClick={handleReveal}
               onAnimationEnd={() => setFeedback("")}
             >
