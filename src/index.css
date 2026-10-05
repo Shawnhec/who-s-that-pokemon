@@ -577,6 +577,7 @@ input {
 }
 
 .ball-button-label {
+  color: black;
   position: relative; /* 有 transform 的圖片會被畫在上層，文字也要提升到上層 */
   z-index: 1;
   font-size: medium;
