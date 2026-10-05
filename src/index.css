@@ -432,7 +432,6 @@ form {
   display: flex;
   align-items: center;
   justify-content:center;
-  gap: 16px;
 }
 
 .button-row .arrow {
@@ -440,6 +439,9 @@ form {
 }
 
 @media (min-width: 200px) and (max-width: 600px) {
+  .button-row {
+    justify-content: space-around;
+  }
   .button-row .arrow {
     width: 40px;
     height: 40px;
@@ -482,6 +484,7 @@ input {
 
 .submit-button {
   color:black;
+  background-color: white;
   outline: none;
   border: 2px solid #999;
   border-radius: 10px;

@@ -486,11 +486,6 @@ const App = () => {
               disabled={isFirst || (timed && !pokemon.revealed)}
               onClick={handlePreviousPokemon}
             />
-            {mode != "beginner" && (
-              <button className="submit-button" type="submit" form="guess-form">
-                Check!
-              </button>
-            )}
             {hintEnabled && (
               <button
                 type="button"
@@ -498,6 +493,11 @@ const App = () => {
                 onClick={() => setShowHint((s) => !s)}
               >
                 {!showHint ? "Show Hint" : "Hide Hint"}
+              </button>
+            )}
+            {mode != "beginner" && (
+              <button className="submit-button" type="submit" form="guess-form">
+                Check!
               </button>
             )}
             {isGameOver && (
