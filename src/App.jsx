@@ -45,11 +45,13 @@ const LEVEL_INFO = {
   beginner:
     "No score, no pressure. Use hints, shuffle the deck, and set aside the Pokémon you've mastered.",
   intermediate:
-    "Your score counts now. Hints are still on and you can move freely, but a wrong guess resets your streak!",
+    "Your score counts now. Hints are on, but you must name each Pokémon or give up before moving on.",
   advanced:
     "No hints. You can't move on until you name the Pokémon or flip the card to give up.",
   master: `No hints, no skipping, and only ${TIME_LIMIT} seconds per card. When time runs out, the card flips and your streak resets.`,
 };
+
+const RESULT_ICON = { correct: "✓", skip: "✗", timeout: "⏱" };
 
 function formatPokemon(p) {
   return {
@@ -101,10 +103,12 @@ const App = () => {
   const [streak, setStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [correctCnt, setCorrectCnt] = useState(0);
-  const [mode, setMode] = useState(""); // "challenge" 計分 | "practice" 練習
+  const [revealedCnt, setRevealedCnt] = useState(0);
+  const [mode, setMode] = useState("");
   const [level, setLevel] = useState("beginner");
   const [mastered, setMastered] = useState([]);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
+  const [showResult, setShowResult] = useState(false);
 
   const guessInputRef = useRef(null);
   const initInputRef = useRef(null);
@@ -121,11 +125,10 @@ const App = () => {
       )
         return;
 
+
       if (e.key === "ArrowUp") {
         e.preventDefault();
-        // markRevealed(currIdx);
-        // setFlipped(true); // ↑ 翻到背面看答案
-        handleReveal();
+        handleManualReveal();
       }
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -142,13 +145,25 @@ const App = () => {
   const isFirst = currIdx === 0;
   const isLast = currIdx === sequence.length - 1;
   const hintEnabled = mode === "beginner" || mode === "intermediate";
-  const mustGuess = mode === "advanced" || mode === "master";
+  const mustGuess =
+    mode === "intermediate" || mode === "advanced" || mode === "master";
   const nextLocked = mustGuess && !pokemon?.revealed;
-
+  const score = ((correctCnt / totalGuess) * 100).toFixed(2) + "%";
   const theme = THEMES[themeIdx];
   const timed = mode === "master";
 
-  const timeStatus = timeLeft <= 5 ? "danger" : timeLeft <= 10 ? "warning" : "safe";
+  const timeLeftPercent = timeLeft / TIME_LIMIT;
+  const timeStatus =
+    timeLeftPercent <= 0.2
+      ? "danger"
+      : timeLeftPercent <= 0.5
+        ? "warning"
+        : "safe";
+  // const revealedCnt = sequence.filter((p) => p.revealed).length; // 已揭曉的張數
+  const isGameOver =
+    (mode === "beginner" && sequence.length === 0) ||
+    ((mode === "intermediate" || mode === "advanced" || mode === "master") &&
+      revealedCnt === totalGuess);
 
   // Master：每張還沒揭曉的卡倒數 TIME_LIMIT 秒
   useEffect(() => {
@@ -161,11 +176,13 @@ const App = () => {
       }
       // 時間到：當作放棄這張
       setSequence((s) =>
-        s.map((p, i) => (i === currIdx ? { ...p, revealed: true } : p)),
+        s.map((p, i) =>
+          i === currIdx ? { ...p, revealed: true, guessResult: "timeout" } : p,
+        ),
       );
+      setRevealedCnt((c) => c + 1);
       setStreak(0);
       setFlipped(true);
-      // setFeedback("wrong");
       setTimeLeft(TIME_LIMIT);
     }, 1000);
 
@@ -190,36 +207,25 @@ const App = () => {
     setTimeLeft(TIME_LIMIT);
   }
 
-  function handleReveal() {
+  function handleManualReveal() {
     if (!pokemon.revealed) {
-      markRevealed(currIdx);
+      markRevealed(currIdx, "skip");
       setStreak(0);
     }
     setFlipped((f) => !f);
   }
 
   function handleNextPokemon() {
-    if (nextLocked) {
-      alert("You must reveal the card or answer the challenge first!");
+    if (nextLocked || isLast) {
       return;
     }
-
-    if (isLast) {
-      if (flipped) {
-        alert(
-          `Your score is ${((correctCnt / totalGuess) * 100).toFixed(2) + "%"}`,
-        );
-      }
-      return;
-    }
-
     setCurrIdx(currIdx + 1);
     setFlipped(false);
     resetGuess();
   }
 
   function handlePreviousPokemon() {
-    if (currIdx === 0) return;
+    if (currIdx === 0 || (timed && !pokemon.revealed)) return;
     setCurrIdx(currIdx - 1);
     setFlipped(false);
     resetGuess();
@@ -247,11 +253,13 @@ const App = () => {
         const newStreak = streak + 1;
         setStreak(newStreak);
         setLongestStreak(Math.max(longestStreak, newStreak));
+        markRevealed(currIdx, "correct");
       }
       setFlipped(true);
-      markRevealed(currIdx);
     } else {
-      setStreak(0);
+      if(!pokemon.revealed) {
+         setStreak(0);
+      }
       setFlipped(false);
     }
   }
@@ -264,11 +272,13 @@ const App = () => {
     setStreak(0);
     setLongestStreak(0);
     setCorrectCnt(0);
+    setRevealedCnt(0);
     setTotalGuess(0);
     setLevel("beginner");
     setShowHint(false);
     setMode("");
     setTimeLeft(TIME_LIMIT);
+    setShowResult(false);
     resetGuess();
   }
 
@@ -291,10 +301,15 @@ const App = () => {
     resetGuess();
   }
 
-  function markRevealed(idx) {
+  function markRevealed(idx, guessResult) {
     setSequence((s) => {
-      return s.map((p, i) => (i === idx ? { ...p, revealed: true } : p));
+      return s.map((p, i) =>
+        i === idx
+          ? { ...p, revealed: true, guessResult: p.guessResult ?? guessResult }
+          : p,
+      );
     });
+    setRevealedCnt(revealedCnt + 1);
     setTimeLeft(TIME_LIMIT); // 這張揭曉了，計時器重設給下一張
   }
 
@@ -304,7 +319,10 @@ const App = () => {
   }
 
   return (
-    <div className={`app ${timeStatus}`} style={{ "--wallpaper": `url("${theme.wallpaper}")` }}>
+    <div
+      className={`app ${timeStatus}`}
+      style={{ "--wallpaper": `url("${theme.wallpaper}")` }}
+    >
       <h1>Who's That Pokémon</h1>
       {mode === "" ? (
         <h2>Welcome, Trainer! Are you ready to test your Pokémon knowledge?</h2>
@@ -315,26 +333,16 @@ const App = () => {
         Number of Pokémons: {mode === "" ? pokemons.length : totalGuess}
       </p>
       {timed && !pokemon?.revealed && (
-        <Timer timeLeft={timeLeft} total={TIME_LIMIT} />
+        <Timer timeLeft={timeLeft} timeTotal={TIME_LIMIT} />
       )}
 
-      {totalGuess != 0 && sequence.length > 0 ? (
+      {sequence.length > 0 && !showResult ? (
         <div className="guess-container">
           {mode == "beginner" ? (
             <>
               <div className="guess-stat-row">
-                {/* <p className="stat">Practice Mode</p> */}
                 <p className="stat">Cards left: {sequence.length}</p>
                 <p className="stat">Mastered: {mastered.length}</p>
-              </div>
-              <div className="practice-row">
-                {/* <button
-                  className="submit-button"
-                  type="button"
-                  onClick={handleShuffle}
-                >
-                  Shuffle
-                </button> */}
               </div>
             </>
           ) : (
@@ -342,23 +350,24 @@ const App = () => {
               <p className="stat">Streak: {streak}</p>
               <p className="stat">Longest Streak: {longestStreak}</p>
               <p className="stat">
-                Score: {((correctCnt / totalGuess) * 100).toFixed(2) + "%"}
+                Score: {score}
               </p>
               <p className="stat">
                 Progress: {currIdx + 1 + " / " + totalGuess}{" "}
               </p>
             </div>
           )}
+
           <div className="card-row">
             <ArrowButton
               direction="left"
-              disabled={isFirst}
+              disabled={isFirst || (timed && !pokemon.revealed)}
               onClick={handlePreviousPokemon}
             />
 
             <div
               className={`card ${timeStatus} ${flipped ? "is-flipped" : ""} ${feedback ? feedback : ""}`}
-              onClick={handleReveal}
+              onClick={handleManualReveal}
               onAnimationEnd={() => setFeedback("")}
             >
               {/* Card front */}
@@ -441,7 +450,7 @@ const App = () => {
             />
           </div>
           {mode != "beginner" && (
-            <form className="guess-form" onSubmit={handleGuess}>
+            <form id="guess-form" className="guess-form" onSubmit={handleGuess}>
               <div className="input-row">
                 <label htmlFor="guess">Guess the Pokémon: </label>
                 <input
@@ -474,11 +483,11 @@ const App = () => {
           <div className="button-row">
             <ArrowButton
               direction="left"
-              disabled={isFirst}
+              disabled={isFirst || (timed && !pokemon.revealed)}
               onClick={handlePreviousPokemon}
             />
             {mode != "beginner" && (
-              <button className="submit-button" type="submit">
+              <button className="submit-button" type="submit" form="guess-form">
                 Check!
               </button>
             )}
@@ -488,7 +497,16 @@ const App = () => {
                 className="submit-button"
                 onClick={() => setShowHint((s) => !s)}
               >
-                {!showHint ? "Show hint" : "Hide hint"}
+                {!showHint ? "Show Hint" : "Hide Hint"}
+              </button>
+            )}
+            {isGameOver && (
+              <button
+                className="submit-button"
+                type="button"
+                onClick={() => setShowResult(true)}
+              >
+                Show Result
               </button>
             )}
             {mode == "beginner" && (
@@ -506,7 +524,7 @@ const App = () => {
                 type="button"
                 onClick={handleMaster}
               >
-                Mastered ✓
+                Mastered 
               </button>
             )}
             <ArrowButton
@@ -520,17 +538,47 @@ const App = () => {
         ""
       )}
 
-      {totalGuess != 0 && sequence.length === 0 && (
-        <p className="stat">You've mastered every card! 🎉</p>
+
+      {isGameOver && (mode === "beginner" || showResult) && (
+        <p className="stat">
+          {mode === "beginner"
+            ? "You've mastered every card!! 🎉"
+            : "You've completed every challenge!! 🔥"}
+        </p>
       )}
 
+      {isGameOver && showResult && 
+        <div className="result-stat-row">
+              <p className="stat">Longest Streak: {longestStreak}</p>
+              <p className="stat">
+                Score: {score}
+              </p>
+        </div>
+      }
+
       {mode == "beginner" && totalGuess != 0 && mastered.length > 0 && (
-        <div className="mastered-list">
+        <div className="list">
           <p className="stat">Mastered Pokémon:</p>
-          <div className="mastered-chips">
+          <div className="chips">
             {mastered.map((p) => (
-              <span key={p.pokedexNumber} className="mastered-chip">
+              <span key={p.pokedexNumber} className="chip">
                 {p.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {mode != "beginner" && showResult && (
+        <div className="list">
+          <p className="stat">Pokémon Encountered:</p>
+          <div className="chips">
+            {sequence.map((p) => (
+              <span
+                key={p.pokedexNumber}
+                className={`chip ${p.guessResult}`}
+              >
+                {RESULT_ICON[p.guessResult]} {p.name}
               </span>
             ))}
           </div>
@@ -587,11 +635,21 @@ const App = () => {
 
       <div className="util-row">
         <button className="submit-button" onClick={handleChangeTheme}>
-          Change theme
+          Change Theme
         </button>
+        {mode != "" && !isGameOver && 
         <button className="submit-button" onClick={handleResetGame}>
-          Reset game
+          Quit Game
         </button>
+        }
+        {
+        ((mode === "beginner" && isGameOver) || 
+        (showResult)) && 
+         <button className="submit-button" type="button" onClick={()=> {
+          handleResetGame();
+          setLevel(mode);
+        }}>Play Again</button>
+      }
       </div>
 
       {/* <div className="pokemon-silhouette">

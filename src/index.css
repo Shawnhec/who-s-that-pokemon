@@ -92,6 +92,19 @@ p {
   margin: 0px;
 }
 
+.result-stat-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.result-stat-row .stat {
+  font-size: medium;
+  font-weight: 900;
+  margin: 0px;
+}
+
 @media (min-width: 200px) and (max-width: 600px) {
   .guess-stat-row {
     gap: 4px;
@@ -457,12 +470,12 @@ input {
 }
 
 
-.guess-input.correct {
+.input.correct {
   border: 2px solid #2e7d32;
   background-color: #e8f5e9;
 }
 
-.guess-input.wrong {
+.input.wrong {
   border: 2px solid #c62828;
   background-color: #ffebee;
 }
@@ -508,20 +521,18 @@ input {
   }
 }
 
-
-/* 已精通清單 */
-.mastered-list {
+.list {
   margin: 16px;
 }
 
-.mastered-chips {
+.chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
 }
 
-.mastered-chip {
+.chip {
   padding: 2px 10px;
   border: 1px solid black;
   border-radius: 10px;
@@ -529,6 +540,11 @@ input {
   font-weight: 600;
 }
 
+.chip.correct { background-color: #e8f5e9; border-color: #2e7d32; }
+
+.chip.skip  { background-color: #ffebee; border-color: #c62828; }
+
+.chip.timeout { background-color: #eeeeee; border-color: #757575; }
 
 
 /* 文字浮在球上面的按鈕 */
