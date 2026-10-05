@@ -73,7 +73,7 @@ First part of the project:
 URL: https://youtu.be/gznGsHgDWsw?si=yG9kRCeCl0Y7zxMm
 
 Second part of the project:
-[![Video Walkthrough](https://img.youtube.com/vi/gznGsHgDWsw/maxresdefault.jpg)](https://youtu.be/2_ZMEvlKzQA)
+[![Video Walkthrough](https://img.youtube.com/vi/2_ZMEvlKzQA/maxresdefault.jpg)](https://youtu.be/2_ZMEvlKzQA)(https://youtu.be/2_ZMEvlKzQA)
 URL: https://youtu.be/2_ZMEvlKzQA?si=yG9kRCeCl0Y7zxMm
 
 
