@@ -492,7 +492,7 @@ input {
   font-weight: 900;
   font-size: medium;
   cursor: pointer;
-  border: transparent;
+  /* border: transparent; */
 }
 
 .submit-button:hover {
