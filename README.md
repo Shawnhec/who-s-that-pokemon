@@ -1,4 +1,4 @@
-# Web Development Project 3 - *Who's That Pokémon*
+# Web Development Project 2 & 3 - *Who's That Pokémon*
 
 Submitted by: **Shawn Chiu**
 
