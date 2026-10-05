@@ -4,11 +4,62 @@ Submitted by: **Shawn Chiu**
 
 This web app: **A Pokémon guessing game inspired by the classic anime segment. Each card shows only clues (type, generation, evolution stage, and Pokédex entry) and you type the Pokémon's name to guess it. Pick one of four difficulty levels, choose how many cards to play, and work through a deck drawn from all 1,025 Pokémon with no repeats.**
 
-Time spent: **30+** hours spent in total
+Time spent: **50+** hours spent in total
 
 Live demo: https://shawnhec.github.io/who-s-that-pokemon/
 
-## Required Features
+---
+
+## Part 1: Flashcards (Project 2)
+
+### Required Features
+
+The following **required** functionality is completed:
+
+- [x] **The app displays the title of the card set, a short description, and the total number of cards**
+  - [x] Title of card set is displayed
+  - [x] A short description of the card set is displayed
+  - [x] A list of card pairs is created
+  - [x] The total number of cards in the set is displayed
+  - [x] Card set is represented as a list of card pairs (an array of dictionaries where each dictionary contains the question and answer is perfectly fine)
+- [x] **A single card at a time is displayed**
+  - [x] Only one half of the information pair is displayed at a time
+- [x] **Clicking on the card flips the card over, showing the corresponding component of the information pair**
+  - [x] Clicking on a card flips it over, showing the back with corresponding information
+  - [x] Clicking on a flipped card again flips it back, showing the front
+- [x] **Clicking on the next button displays a random new card**
+  - *In Part 2, the deck is drawn in a random order when the game starts, and the next button moves through it.*
+
+### Optional Features
+
+The following **optional** features are implemented:
+
+- [x] Cards contain images in addition to or in place of text
+  - [x] Some or all cards have images in place of or in addition to text
+- [x] Cards have different visual styles such as color based on their category
+  - *Each card's background color matches the Pokémon's type (Fire, Water, Grass, and so on).*
+
+### Additional Features
+
+The following **additional** features are implemented:
+
+* [x] Clicking on a button reveals more information about the content on the back of the card
+* [x] Clicking on a button changes the wallpaper and theme of the application
+* [x] Responsive Web Design
+* [x] Deploy on GitHub Pages: https://shawnhec.github.io/who-s-that-pokemon/
+
+### Video Walkthrough
+
+Here's a walkthrough of implemented required features:
+
+[![Video Walkthrough](https://img.youtube.com/vi/gznGsHgDWsw/maxresdefault.jpg)](https://youtu.be/gznGsHgDWsw)
+URL: https://youtu.be/gznGsHgDWsw?si=yG9kRCeCl0Y7zxMm
+
+---
+
+## Part 2: Flashcards Part 2 (Project 3)
+
+### Required Features
 
 The following **required** functionality is completed:
 
@@ -23,8 +74,9 @@ The following **required** functionality is completed:
   - Both the next and back buttons should have some visual indication that the user is at the beginning or end of the list (for example, graying out and no longer being available to click), not allowing for wrap-around navigation
   - *The whole deck is drawn when the game starts, so the order stays fixed. The arrow buttons fade out and stop responding on the first and last card.*
 
-The following **optional** features are implemented:
+### Optional Features
 
+The following **optional** features are implemented:
 
 - [x] Users can use a shuffle button to randomize the order of the cards
   - Cards should remain in the same sequence (**NOT** randomized) unless the shuffle button is clicked
@@ -44,6 +96,7 @@ The following **optional** features are implemented:
   - Mastered cards are removed from the pool of displayed cards and added to a list of mastered cards
   - *Available in Beginner. The **Mastered ✓** button removes the card from the deck and adds it to the "Mastered Pokémon" list below the game.*
 
+### Additional Features
 
 The following **additional** features are implemented:
 
@@ -64,18 +117,12 @@ The following **additional** features are implemented:
 * [x] Responsive layout for phones, including restoring the scroll position after the on-screen keyboard closes
 * [x] Deployed on GitHub Pages
 
-## Video Walkthrough
+### Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-First part of the project:
-[![Video Walkthrough](https://img.youtube.com/vi/gznGsHgDWsw/maxresdefault.jpg)](https://youtu.be/gznGsHgDWsw)
-URL: https://youtu.be/gznGsHgDWsw?si=yG9kRCeCl0Y7zxMm
-
-Second part of the project:
 [![Video Walkthrough](https://img.youtube.com/vi/2_ZMEvlKzQA/maxresdefault.jpg)](https://youtu.be/2_ZMEvlKzQA)
 URL: https://youtu.be/2_ZMEvlKzQA?si=yG9kRCeCl0Y7zxMm
-
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with ...
@@ -83,6 +130,8 @@ GIF created with ...
 [Kap](https://getkap.co/) for macOS
 [ScreenToGif](https://www.screentogif.com/) for Windows
 [peek](https://github.com/phw/peek) for Linux. -->
+
+---
 
 ## Notes
 
